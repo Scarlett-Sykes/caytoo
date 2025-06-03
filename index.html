@@ -81,8 +81,8 @@
     <input type="submit" value="Submit">
   </form>
 
-  <div id="thankYouMessage" style="display: none; color: green; margin-top: 10px; text-align: center;">
-    ✅ Thank you! Your submission was received.
+  <div id="thankYouMessage">
+    ✅ Thank you! Your submission was received. You can now submit another signal or deal.
   </div>
 
   <script>
@@ -124,9 +124,7 @@
           form.reset();
           const thankYou = document.getElementById('thankYouMessage');
           thankYou.style.display = 'block';
-          setTimeout(() => {
-            thankYou.style.display = 'none';
-          }, 10000);
+       
         } else {
           alert('There was an error submitting the form.');
         }
