@@ -32,6 +32,24 @@
       box-sizing: border-box;
       font-size: 16px;
     }  
+
+    .custom-button {
+  background: linear-gradient(90deg, #ff416c, #ff4b2b); /* Gradient */
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 9999px; /* Full rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.custom-button:hover {
+  opacity: 0.9;
+}
+
   #thankYouMessage {
   background-color: rgba(255, 255, 255, 0.9);
   padding: 20px;
@@ -78,13 +96,7 @@
     <label for="url">Article URL:</label><br>
     <input type="url" id="url" name="url" required><br><br>
 
-    <!-- Submit Button -->
-<button type="submit" class="inline-flex items-center justify-center text-sm font-medium rounded-lg focus-visible:outline-none focus-visible:ring-1.5 focus-visible:ring-offset-1.5 focus-visible:ring-caytoo-400 disabled:cursor-not-allowed group text-white bg-brand-gradient-r hover:bg-blend-multiply hover:bg-dark-overlay drop-shadow disabled:bg-gray-300 disabled:bg-none px-3.5 h-9">
-  <span class="inline-flex items-center">
-    <span class="text-nowrap">Submit</span>
-  </span>
-</button>
-
+    <button type="submit" class="custom-button">Submit</button>
 
   </form>
 
