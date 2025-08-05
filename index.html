@@ -146,25 +146,44 @@
         }
       }
 
-      try {
-        const response = await fetch('http://localhost:5678/webhook-test/form-input', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+try {
+  const response = await fetch('http://localhost:5678/webhook/form-input', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
 
-        if (response.ok) {
-          form.reset();
-          const thankYou = document.getElementById('thankYouMessage');
-          thankYou.style.display = 'block';
-        } else {
-          alert('There was an error submitting the form.');
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        alert('Failed to submit. Please try again.');
-      }
-    });
+  let responseData = null;
+  try {
+    responseData = await response.json(); // Try to parse response body
+  } catch (parseError) {
+    // No body returned
+  }
+
+  if (response.ok && responseData) {
+    // ✅ Success case
+    form.reset();
+    thankYouDiv.style.color = 'green';
+    thankYouDiv.textContent = "✅ Thank you! We'll process that right away!";
+  } else if (response.ok && !responseData) {
+    // ❌ No body returned from n8n (e.g. Apollo failure)
+    thankYouDiv.style.color = 'red';
+    thankYouDiv.textContent = "❌ Brand or RH ot in Apollo — please check input or try again.";
+  } else {
+    // ❌ Error response from n8n
+    thankYouDiv.style.color = 'red';
+    thankYouDiv.textContent = "❌ Sorry, there was an error submitting your deal or signal. Please try again.";
+  }
+
+  thankYouDiv.style.display = 'block';
+
+} catch (error) {
+  // ❌ Total failure (e.g., can't reach n8n server)
+  console.error('Form submission error:', error);
+  thankYouDiv.style.color = 'red';
+  thankYouDiv.textContent = "❌ Submission failed. Please check your connection and try again.";
+  thankYouDiv.style.display = 'block';
+}
   </script>
 
 </body>
