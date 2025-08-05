@@ -6,7 +6,7 @@
     body {
       font-family: 'Montserrat', sans-serif;
       background-image: url('caytoo_Report cover template V2.png');
-      background-size: contain;
+      background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
       color: #333;
@@ -25,12 +25,13 @@
       margin: 0 auto 20px auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    #url {
+    #url, #sector {
       width: 100%;
       max-width: 780px;
       padding: 8px;
       box-sizing: border-box;
       font-size: 16px;
+      margin-bottom: 15px;
     }
     .custom-button {
       background: linear-gradient(180deg, #FF5476, #FF5156);
@@ -66,7 +67,74 @@
 
   <form id="myForm">
     <label for="url">Rightsholder URL:</label><br>
-    <input type="url" id="url" name="url" required><br><br>
+    <input type="url" id="url" name="url" required><br>
+
+    <label for="sector">Rightsholder Sector:</label><br>
+    <select id="sector" name="sector" required>
+      <option value="" disabled selected>Select sector</option>
+      <option>Archery</option>
+      <option>Athletics</option>
+      <option>Baseball</option>
+      <option>Cricket</option>
+      <option>Basketball</option>
+      <option>Netball</option>
+      <option>Soccer</option>
+      <option>American Football</option>
+      <option>Aussie Rules</option>
+      <option>Rugby Union</option>
+      <option>Rugby League</option>
+      <option>Gaelic Sports</option>
+      <option>Handball</option>
+      <option>Field Hockey</option>
+      <option>Ice Hockey</option>
+      <option>Badminton</option>
+      <option>Padel</option>
+      <option>Pickleball</option>
+      <option>Table Tennis</option>
+      <option>Tennis</option>
+      <option>Volleyball</option>
+      <option>Squash</option>
+      <option>Skateboarding</option>
+      <option>Snowboarding</option>
+      <option>Surfing</option>
+      <option>Rowing/Canoe/Kayak</option>
+      <option>Swimming</option>
+      <option>Climbing</option>
+      <option>Cycling</option>
+      <option>Combat Sports</option>
+      <option>Gymnastics</option>
+      <option>Skiing</option>
+      <option>Darts</option>
+      <option>Formula/Open-Wheel Racing</option>
+      <option>Sports Car/Closed-Wheel Racing</option>
+      <option>Motorcycle Racing</option>
+      <option>Sailing</option>
+      <option>Dog Sports</option>
+      <option>Horse Racing</option>
+      <option>Equestrian (exc Horse Racing)</option>
+      <option>Fishing</option>
+      <option>Esports</option>
+      <option>Cue Sports</option>
+      <option>Golf</option>
+      <option>Multisports</option>
+      <option>Niche Sports</option>
+      <option>Music</option>
+      <option>Performing Arts</option>
+      <option>Film</option>
+      <option>Broadcast/Media</option>
+      <option>Venue</option>
+      <option>Leisure/Tourism</option>
+      <option>Exhibition/Fair</option>
+      <option>Museum/Institution</option>
+      <option>Fashion</option>
+      <option>Parade/Celebration</option>
+      <option>Conference</option>
+      <option>Awards</option>
+      <option>Initiative</option>
+      <option>Organisation</option>
+      <option>Civic/Charity</option>
+      <option>Other</option>
+    </select>
 
     <button type="submit" class="custom-button">Submit</button>
   </form>
@@ -74,6 +142,12 @@
   <div id="thankYouMessage"></div>
 
   <script>
+    function generateCustomUniqueId() {
+      const part1 = Math.floor(Math.random() * 900000) + 100000;
+      const part2 = Math.floor(Math.random() * 900) + 100;
+      const part3 = Math.floor(Math.random() * 9000) + 1000;
+      return `${part1}_${part2}_${part3}`;
+    }
 
     document.getElementById('myForm').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -95,7 +169,7 @@
       }
 
       try {
-        const response = await fetch('http://localhost:5678/webhook/form-input', {
+        const response = await fetch('http://localhost:5678/webhook-test/form-input', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
