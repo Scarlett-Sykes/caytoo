@@ -124,8 +124,10 @@
       return `${part1}_${part2}_${part3}`;
     }
 
-    // Set initial unique_id
-    document.getElementById('unique_id').value = generateCustomUniqueId();
+
+  // ✅ Set today's date as default for sponsorship_date
+  document.getElementById('sponsorship_date').value = new Date().toISOString().split('T')[0];
+
 
     document.getElementById('myForm').addEventListener('submit', async function (e) {
       e.preventDefault();
