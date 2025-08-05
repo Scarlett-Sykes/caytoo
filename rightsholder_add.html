@@ -1,47 +1,124 @@
-<div id="thankYouMessage" style="display:none; background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 10px; width: 800px; margin: 0 auto 50px auto; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: center; font-weight: bold;"></div>
-
-<script>
-  document.getElementById('myForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const thankYouDiv = document.getElementById('thankYouMessage');
-    thankYouDiv.style.display = 'none';  // Hide message at start
-
-    const formData = new FormData(form);
-    formData.set('unique_id', generateCustomUniqueId());
-
-    const data = {};
-    for (const [key, value] of formData.entries()) {
-      if (data[key]) {
-        data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
-      } else {
-        data[key] = value;
-      }
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-image: url('caytoo_Report cover template V2.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      color: #333;
     }
+    h2 {
+      color: white;
+      width: 800px;
+      margin: 20px auto;
+      text-align: left;
+    }
+    form {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 10px;
+      width: 800px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    #url {
+      width: 100%;
+      max-width: 780px;
+      padding: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    .custom-button {
+      background: linear-gradient(180deg, #FF5476, #FF5156);
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .custom-button:hover {
+      opacity: 0.9;
+    }
+    #thankYouMessage {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      width: 800px;
+      margin: 0 auto 50px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
 
-    try {
-      const response = await fetch('http://localhost:5678/webhook-test/form-input', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+  <h2>Add Rightsholder</h2>
 
-      if (response.ok) {
-        form.reset();
-        thankYouDiv.style.color = 'green';
-        thankYouDiv.textContent = "✅ Thank you! That Rightsholder processed fine.";
-        thankYouDiv.style.display = 'block';
-      } else {
+  <form id="myForm">
+    <label for="url">Rightsholder URL:</label><br>
+    <input type="url" id="url" name="url" required><br><br>
+
+    <button type="submit" class="custom-button">Submit</button>
+  </form>
+
+  <div id="thankYouMessage"></div>
+
+  <script>
+
+    document.getElementById('myForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const thankYouDiv = document.getElementById('thankYouMessage');
+      thankYouDiv.style.display = 'none';  // Hide message on new submit
+
+      const formData = new FormData(form);
+      formData.set('unique_id', generateCustomUniqueId());
+
+      const data = {};
+      for (const [key, value] of formData.entries()) {
+        if (data[key]) {
+          data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
+        } else {
+          data[key] = value;
+        }
+      }
+
+      try {
+        const response = await fetch('http://localhost:5678/webhook-test/form-input', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          form.reset();
+          thankYouDiv.style.color = 'green';
+          thankYouDiv.textContent = "✅ Thank you! We'll process that right away!";
+          thankYouDiv.style.display = 'block';
+        } else {
+          thankYouDiv.style.color = 'red';
+          thankYouDiv.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
+          thankYouDiv.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
         thankYouDiv.style.color = 'red';
-        thankYouDiv.textContent = "❌ Sorry, there was an error processing the Rightsholder. Check if they are on Apollo.";
+        thankYouDiv.textContent = "❌ Submission failed. Please check your connection and try again.";
         thankYouDiv.style.display = 'block';
       }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      thankYouDiv.style.color = 'red';
-      thankYouDiv.textContent = "❌ Submission failed. Please check your connection and try again.";
-      thankYouDiv.style.display = 'block';
-    }
-  });
-</script>
+    });
+  </script>
+
+</body>
+</html>
