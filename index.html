@@ -27,12 +27,12 @@
     }
     
     input[type="checkbox"] {
-  transform: scale(1.2); /* Adjust size as needed */
-  margin-right: 8px; /* Optional: spacing between checkbox and label */
-  cursor: pointer;
-}
+      transform: scale(1.2);
+      margin-right: 8px;
+      cursor: pointer;
+    }
 
-    #headline, #url {
+    #headline, #url, #sponsorship_date {
       width: 100%;
       max-width: 780px;
       padding: 8px;
@@ -41,33 +41,33 @@
     }  
 
     .custom-button {
-  background: linear-gradient(180deg, #FF5476, #FF5156); /* Gradient */
-  color: white;
-  font-weight: bold;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 9999px; /* Full rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
+      background: linear-gradient(180deg, #FF5476, #FF5156);
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-.custom-button:hover {
-  opacity: 0.9;
-}
+    .custom-button:hover {
+      opacity: 0.9;
+    }
 
-#thankYouMessage {
-  display: none; /* ✅ Hide initially */
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  width: 800px;
-  margin: 0 auto 50px auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  text-align: center;
-  font-weight: bold;
-}
+    #thankYouMessage {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      width: 800px;
+      margin: 0 auto 50px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      text-align: center;
+      font-weight: bold;
+    }
 
   </style>
 </head>
@@ -103,6 +103,10 @@
 
     <label for="url">Article URL:</label><br>
     <input type="url" id="url" name="url" required><br><br>
+
+    <!-- ✅ Added Sponsorship Date Field -->
+    <label for="sponsorship_date">Sponsorship Date:</label><br>
+    <input type="date" id="sponsorship_date" name="sponsorship_date"><br><br>
 
     <button type="submit" class="custom-button">Submit</button>
 
@@ -151,7 +155,6 @@
           form.reset();
           const thankYou = document.getElementById('thankYouMessage');
           thankYou.style.display = 'block';
-       
         } else {
           alert('There was an error submitting the form.');
         }
