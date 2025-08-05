@@ -169,29 +169,39 @@
         }
       }
 
-      try {
-        const response = await fetch('http://localhost:5678/webhook/form-input', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+try {
+  const response = await fetch('http://localhost:5678/webhook/form-input', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
 
-        if (response.ok) {
-          form.reset();
-          thankYouDiv.style.color = 'green';
-          thankYouDiv.textContent = "✅ Thank you! We'll process that right away!";
-          thankYouDiv.style.display = 'block';
-        } else {
-          thankYouDiv.style.color = 'red';
-          thankYouDiv.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
-          thankYouDiv.style.display = 'block';
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        thankYouDiv.style.color = 'red';
-        thankYouDiv.textContent = "❌ Submission failed. Please check your connection and try again.";
-        thankYouDiv.style.display = 'block';
-      }
+  const responseData = await response.json();  // parse JSON response
+
+  if (!response.ok) {
+    // HTTP status not OK, show generic error
+    thankYouDiv.style.color = 'red';
+    thankYouDiv.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
+  } else if (responseData.error) {
+    // n8n returned success HTTP code but JSON contains error info
+    thankYouDiv.style.color = 'red';
+    thankYouDiv.textContent = `❌ Submission error: ${responseData.error.message || "Unknown error"}`;
+  } else {
+    // Success case
+    form.reset();
+    thankYouDiv.style.color = 'green';
+    thankYouDiv.textContent = "✅ Thank you! We'll process that right away!";
+  }
+
+  thankYouDiv.style.display = 'block';
+
+} catch (error) {
+  console.error('Form submission error:', error);
+  thankYouDiv.style.color = 'red';
+  thankYouDiv.textContent = "❌ Submission failed. Please check your connection and try again.";
+  thankYouDiv.style.display = 'block';
+}
+
     });
   </script>
 
