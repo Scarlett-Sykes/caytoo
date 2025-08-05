@@ -1,190 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-image: url('caytoo_Report cover template V2.png');
-      background-size: auto;
-      background-repeat: no-repeat;
-      background-position: center;
-      color: #333;
-    }
-    h2 {
-      color: white;
-      width: 800px;
-      margin: 20px auto;
-      text-align: left;
-    }
-    form {
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 10px;
-      border-radius: 10px;
-      width: 800px;
-      margin: 0 auto 20px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    #url, #sector {
-      width: 100%;
-      max-width: 780px;
-      padding: 8px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-    .custom-button {
-      background: linear-gradient(180deg, #FF5476, #FF5156);
-      color: white;
-      font-weight: bold;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 9999px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .custom-button:hover {
-      opacity: 0.9;
-    }
-    #thankYouMessage {
-      display: none;
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 10px;
-      width: 800px;
-      margin: 0 auto 50px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      text-align: center;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
+<div id="thankYouMessage" style="display:none; background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 10px; width: 800px; margin: 0 auto 50px auto; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: center; font-weight: bold;"></div>
 
-  <h2>Add Rightsholder</h2>
+<script>
+  document.getElementById('myForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-  <form id="myForm">
-    <label for="url">Rightsholder URL:</label><br>
-    <input type="url" id="url" name="url" required><br><br>
+    const form = e.target;
+    const thankYouDiv = document.getElementById('thankYouMessage');
+    thankYouDiv.style.display = 'none';  // Hide message at start
 
-    <label for="sector">Rightsholder Sector:</label><br>
-    <select id="sector" name="sector" required>
-      <option value="" disabled selected>Select a sector</option>
-      <option value="Archery">Archery</option>
-      <option value="Athletics">Athletics</option>
-      <option value="Baseball">Baseball</option>
-      <option value="Cricket">Cricket</option>
-      <option value="Basketball">Basketball</option>
-      <option value="Netball">Netball</option>
-      <option value="Soccer">Soccer</option>
-      <option value="American Football">American Football</option>
-      <option value="Aussie Rules">Aussie Rules</option>
-      <option value="Rugby Union">Rugby Union</option>
-      <option value="Rugby League">Rugby League</option>
-      <option value="Gaelic Sports">Gaelic Sports</option>
-      <option value="Handball">Handball</option>
-      <option value="Field Hockey">Field Hockey</option>
-      <option value="Ice Hockey">Ice Hockey</option>
-      <option value="Badminton">Badminton</option>
-      <option value="Padel">Padel</option>
-      <option value="Pickleball">Pickleball</option>
-      <option value="Table Tennis">Table Tennis</option>
-      <option value="Tennis">Tennis</option>
-      <option value="Volleyball">Volleyball</option>
-      <option value="Squash">Squash</option>
-      <option value="Skateboarding">Skateboarding</option>
-      <option value="Snowboarding">Snowboarding</option>
-      <option value="Surfing">Surfing</option>
-      <option value="Rowing/Canoe/Kayak">Rowing/Canoe/Kayak</option>
-      <option value="Swimming">Swimming</option>
-      <option value="Climbing">Climbing</option>
-      <option value="Cycling">Cycling</option>
-      <option value="Combat Sports">Combat Sports</option>
-      <option value="Gymnastics">Gymnastics</option>
-      <option value="Skiing">Skiing</option>
-      <option value="Darts">Darts</option>
-      <option value="Formula/Open-Wheel Racing">Formula/Open-Wheel Racing</option>
-      <option value="Sports Car/Closed-Wheel Racing">Sports Car/Closed-Wheel Racing</option>
-      <option value="Motorcycle Racing">Motorcycle Racing</option>
-      <option value="Sailing">Sailing</option>
-      <option value="Dog Sports">Dog Sports</option>
-      <option value="Horse Racing">Horse Racing</option>
-      <option value="Equestrian (exc Horse Racing)">Equestrian (exc Horse Racing)</option>
-      <option value="Fishing">Fishing</option>
-      <option value="Esports">Esports</option>
-      <option value="Cue Sports">Cue Sports</option>
-      <option value="Golf">Golf</option>
-      <option value="Multisports">Multisports</option>
-      <option value="Niche Sports">Niche Sports</option>
-      <option value="Music">Music</option>
-      <option value="Performing Arts">Performing Arts</option>
-      <option value="Film">Film</option>
-      <option value="Broadcast/Media">Broadcast/Media</option>
-      <option value="Venue">Venue</option>
-      <option value="Leisure/Tourism">Leisure/Tourism</option>
-      <option value="Exhibition/Fair">Exhibition/Fair</option>
-      <option value="Museum/Institution">Museum/Institution</option>
-      <option value="Fashion">Fashion</option>
-      <option value="Parade/Celebration">Parade/Celebration</option>
-      <option value="Conference">Conference</option>
-      <option value="Awards">Awards</option>
-      <option value="Initiative">Initiative</option>
-      <option value="Organisation">Organisation</option>
-      <option value="Civic/Charity">Civic/Charity</option>
-      <option value="Other">Other</option>
-    </select><br><br>
+    const formData = new FormData(form);
+    formData.set('unique_id', generateCustomUniqueId());
 
-    <button type="submit" class="custom-button">Submit</button>
-  </form>
-
-  <div id="thankYouMessage">
-    ✅ Thank you! We'll process that right away!
-  </div>
-
-  <script>
-    function generateCustomUniqueId() {
-      const part1 = Math.floor(Math.random() * 900000) + 100000;
-      const part2 = Math.floor(Math.random() * 900) + 100;
-      const part3 = Math.floor(Math.random() * 9000) + 1000;
-      return `${part1}_${part2}_${part3}`;
-    }
-
-    document.getElementById('myForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const form = e.target;
-      const formData = new FormData(form);
-      formData.set('unique_id', generateCustomUniqueId());
-
-      const data = {};
-      for (const [key, value] of formData.entries()) {
-        if (data[key]) {
-          data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
-        } else {
-          data[key] = value;
-        }
+    const data = {};
+    for (const [key, value] of formData.entries()) {
+      if (data[key]) {
+        data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
+      } else {
+        data[key] = value;
       }
+    }
 
-      try {
-        const response = await fetch('http://localhost:5678/webhook-test/form-input', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+    try {
+      const response = await fetch('http://localhost:5678/webhook-test/form-input', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-        if (response.ok) {
-          form.reset();
-          document.getElementById('thankYouMessage').style.display = 'block';
-        } else {
-          alert('There was an error submitting the form.');
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        alert('Failed to submit. Please try again.');
+      if (response.ok) {
+        form.reset();
+        thankYouDiv.style.color = 'green';
+        thankYouDiv.textContent = "✅ Thank you! That Rightsholder processed fine.";
+        thankYouDiv.style.display = 'block';
+      } else {
+        thankYouDiv.style.color = 'red';
+        thankYouDiv.textContent = "❌ Sorry, there was an error processing the Rightsholder. Check if they are on Apollo.";
+        thankYouDiv.style.display = 'block';
       }
-    });
-  </script>
-
-</body>
-</html>
+    } catch (error) {
+      console.error('Form submission error:', error);
+      thankYouDiv.style.color = 'red';
+      thankYouDiv.textContent = "❌ Submission failed. Please check your connection and try again.";
+      thankYouDiv.style.display = 'block';
+    }
+  });
+</script>
