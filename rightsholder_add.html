@@ -25,7 +25,7 @@
       margin: 0 auto 20px auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    #url {
+    #url, #sector {
       width: 100%;
       max-width: 780px;
       padding: 8px;
@@ -67,6 +67,73 @@
   <form id="myForm">
     <label for="url">Rightsholder URL:</label><br>
     <input type="url" id="url" name="url" required><br><br>
+
+    <label for="sector">Rightsholder Sector:</label><br>
+    <select id="sector" name="sector" required>
+      <option value="" disabled selected>Select a sector</option>
+      <option value="Archery">Archery</option>
+      <option value="Athletics">Athletics</option>
+      <option value="Baseball">Baseball</option>
+      <option value="Cricket">Cricket</option>
+      <option value="Basketball">Basketball</option>
+      <option value="Netball">Netball</option>
+      <option value="Soccer">Soccer</option>
+      <option value="American Football">American Football</option>
+      <option value="Aussie Rules">Aussie Rules</option>
+      <option value="Rugby Union">Rugby Union</option>
+      <option value="Rugby League">Rugby League</option>
+      <option value="Gaelic Sports">Gaelic Sports</option>
+      <option value="Handball">Handball</option>
+      <option value="Field Hockey">Field Hockey</option>
+      <option value="Ice Hockey">Ice Hockey</option>
+      <option value="Badminton">Badminton</option>
+      <option value="Padel">Padel</option>
+      <option value="Pickleball">Pickleball</option>
+      <option value="Table Tennis">Table Tennis</option>
+      <option value="Tennis">Tennis</option>
+      <option value="Volleyball">Volleyball</option>
+      <option value="Squash">Squash</option>
+      <option value="Skateboarding">Skateboarding</option>
+      <option value="Snowboarding">Snowboarding</option>
+      <option value="Surfing">Surfing</option>
+      <option value="Rowing/Canoe/Kayak">Rowing/Canoe/Kayak</option>
+      <option value="Swimming">Swimming</option>
+      <option value="Climbing">Climbing</option>
+      <option value="Cycling">Cycling</option>
+      <option value="Combat Sports">Combat Sports</option>
+      <option value="Gymnastics">Gymnastics</option>
+      <option value="Skiing">Skiing</option>
+      <option value="Darts">Darts</option>
+      <option value="Formula/Open-Wheel Racing">Formula/Open-Wheel Racing</option>
+      <option value="Sports Car/Closed-Wheel Racing">Sports Car/Closed-Wheel Racing</option>
+      <option value="Motorcycle Racing">Motorcycle Racing</option>
+      <option value="Sailing">Sailing</option>
+      <option value="Dog Sports">Dog Sports</option>
+      <option value="Horse Racing">Horse Racing</option>
+      <option value="Equestrian (exc Horse Racing)">Equestrian (exc Horse Racing)</option>
+      <option value="Fishing">Fishing</option>
+      <option value="Esports">Esports</option>
+      <option value="Cue Sports">Cue Sports</option>
+      <option value="Golf">Golf</option>
+      <option value="Multisports">Multisports</option>
+      <option value="Niche Sports">Niche Sports</option>
+      <option value="Music">Music</option>
+      <option value="Performing Arts">Performing Arts</option>
+      <option value="Film">Film</option>
+      <option value="Broadcast/Media">Broadcast/Media</option>
+      <option value="Venue">Venue</option>
+      <option value="Leisure/Tourism">Leisure/Tourism</option>
+      <option value="Exhibition/Fair">Exhibition/Fair</option>
+      <option value="Museum/Institution">Museum/Institution</option>
+      <option value="Fashion">Fashion</option>
+      <option value="Parade/Celebration">Parade/Celebration</option>
+      <option value="Conference">Conference</option>
+      <option value="Awards">Awards</option>
+      <option value="Initiative">Initiative</option>
+      <option value="Organisation">Organisation</option>
+      <option value="Civic/Charity">Civic/Charity</option>
+      <option value="Other">Other</option>
+    </select><br><br>
 
     <button type="submit" class="custom-button">Submit</button>
   </form>
