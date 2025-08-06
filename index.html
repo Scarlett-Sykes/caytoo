@@ -1,58 +1,172 @@
-<script>
-  document.getElementById('sponsorship_date').value = new Date().toISOString().split('T')[0];
-
-  document.getElementById('myForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    const data = {};
-    for (const [key, value] of formData.entries()) {
-      if (data[key]) {
-        // Handle multiple checkbox values
-        data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
-      } else {
-        data[key] = value;
-      }
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-image: url('caytoo_Report cover template V2.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center 20%;
+      color: #333;
     }
+    h2 {
+      color: white;
+      width: 800px;
+      margin: 20px auto;
+      text-align: left;
+    }
+    form {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 10px;
+      width: 800px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 8px;
+      cursor: pointer;
+    }
+    #headline, #url, #sponsorship_date {
+      width: 100%;
+      max-width: 780px;
+      padding: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    textarea {
+      width: 100%;
+      max-width: 780px;
+      padding: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .custom-button {
+      background: linear-gradient(180deg, #FF5476, #FF5156);
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .custom-button:hover {
+      opacity: 0.9;
+    }
+    #thankYouMessage {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      width: 800px;
+      margin: 0 auto 50px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
 
-    try {
-      const response = await fetch('http://localhost:5678/webhook-test/form-input', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+  <h2>Process Signal or Sponsorship</h2>
+
+  <form id="myForm">
+    <fieldset>
+      <legend>Select Signal Type:</legend>
+      <input type="checkbox" name="signal_type" value="SDT"> Sponsorship<br>
+      <input type="checkbox" name="signal_type" value="agh"> Agency hire<br>
+      <input type="checkbox" name="signal_type" value="CPL"> Campaign launch<br>
+      <input type="checkbox" name="signal_type" value="EXP"> Expansion<br>
+      <input type="checkbox" name="signal_type" value="FND"> Funding<br>
+      <input type="checkbox" name="signal_type" value="GPR"> Growth/performance<br>
+      <input type="checkbox" name="signal_type" value="MER"> Merger/acquisitions<br>
+      <input type="checkbox" name="signal_type" value="PRT"> Partnership<br>
+      <input type="checkbox" name="signal_type" value="PLN"> Product Launch<br>
+      <input type="checkbox" name="signal_type" value="SMH"> Senior marketer hire<br>
+      <input type="checkbox" name="signal_type" value="SPH"> Senior person hire<br>
+    </fieldset>
+
+    <br>
+
+    <label for="headline">Headline:</label><br>
+    <input type="text" id="headline" name="headline" required><br><br>
+
+    <label for="article_text">Article Text:</label><br>
+    <textarea id="article_text" name="article_text" rows="15" required></textarea><br><br>
+
+    <label for="url">Article URL:</label><br>
+    <input type="url" id="url" name="url" required><br><br>
+
+    <label for="sponsorship_date">Sponsorship Date:</label><br>
+    <input type="date" id="sponsorship_date" name="sponsorship_date"><br><br>
+
+    <button type="submit" class="custom-button">Submit</button>
+  </form>
+
+  <div id="thankYouMessage"></div>
+
+  <script>
+    // Set default date to today
+    document.getElementById('sponsorship_date').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('myForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {};
+
+      for (const [key, value] of formData.entries()) {
+        if (data[key]) {
+          data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
+        } else {
+          data[key] = value;
+        }
+      }
 
       const thankYou = document.getElementById('thankYouMessage');
 
-      let responseData = null;
       try {
-        responseData = await response.json();
-      } catch (parseError) {
-        // No body returned
-      }
+        const response = await fetch('http://localhost:5678/webhook-test/form-input', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
 
-      if (response.ok && responseData) {
-        form.reset();
-        thankYou.style.color = 'green';
-        thankYou.textContent = "✅ Thank you! Your submission was received. You can now submit another signal or deal.";
-      } else if (response.ok && !responseData) {
+        let responseBody = null;
+        const contentType = response.headers.get('Content-Type') || '';
+
+        if (contentType.includes('application/json')) {
+          responseBody = await response.json();
+        }
+
+        if (response.ok && responseBody) {
+          form.reset();
+          thankYou.style.color = 'green';
+          thankYou.textContent = "✅ Thank you! Your submission was received. You can now submit another signal or deal.";
+        } else if (response.ok && !responseBody) {
+          thankYou.style.color = 'red';
+          thankYou.textContent = "❌ Not in Apollo — please check input or try again.";
+        } else {
+          thankYou.style.color = 'red';
+          thankYou.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
+        }
+
+      } catch (error) {
+        console.error('Form submission error:', error);
         thankYou.style.color = 'red';
-        thankYou.textContent = "❌ Not in Apollo — please check input or try again.";
-      } else {
-        thankYou.style.color = 'red';
-        thankYou.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
+        thankYou.textContent = "❌ Submission failed. Please check your connection and try again.";
       }
 
       thankYou.style.display = 'block';
+    });
+  </script>
 
-    } catch (error) {
-      console.error('Form submission error:', error);
-      const thankYou = document.getElementById('thankYouMessage');
-      thankYou.style.color = 'red';
-      thankYou.textContent = "❌ Submission failed. Please check your connection and try again.";
-      thankYou.style.display = 'block';
-    }
-  });
-</script>
+</body>
+</html>
