@@ -139,23 +139,13 @@
           body: JSON.stringify(data)
         });
 
-        let responseBody = null;
-        const contentType = response.headers.get('Content-Type') || '';
-
-        if (contentType.includes('application/json')) {
-          responseBody = await response.json();
-        }
-
-        if (response.ok && responseBody) {
+        if (response.ok) {
           form.reset();
           thankYou.style.color = 'green';
           thankYou.textContent = "✅ Thank you! Your submission was received. You can now submit another signal or deal.";
-        } else if (response.ok && !responseBody) {
-          thankYou.style.color = 'red';
-          thankYou.textContent = "❌ Not in Apollo — please check input or try again.";
         } else {
           thankYou.style.color = 'red';
-          thankYou.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
+          thankYou.textContent = "❌ There was an error submitting your data. Please try again.";
         }
 
       } catch (error) {
