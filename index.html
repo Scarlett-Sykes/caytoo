@@ -116,44 +116,62 @@
     ✅ Thank you! Your submission was received. You can now submit another signal or deal.
   </div>
 
-  <script>
-    
-    document.getElementById('sponsorship_date').value = new Date().toISOString().split('T')[0];
-    
-    document.getElementById('myForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
+<script>
+  document.getElementById('sponsorship_date').value = new Date().toISOString().split('T')[0];
 
+  document.getElementById('myForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-      const data = {};
-      for (const [key, value] of formData.entries()) {
-        if (data[key]) {
-          // Handle multiple checkbox values
-          data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
-        } else {
-          data[key] = value;
-        }
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const data = {};
+    for (const [key, value] of formData.entries()) {
+      if (data[key]) {
+        // Handle multiple checkbox values
+        data[key] = Array.isArray(data[key]) ? [...data[key], value] : [data[key], value];
+      } else {
+        data[key] = value;
       }
+    }
 
+    try {
+      const response = await fetch('http://localhost:5678/webhook-test/form-input', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const thankYou = document.getElementById('thankYouMessage');
+
+      let responseData = null;
       try {
-        const response = await fetch('http://localhost:5678/webhook-test/form-input', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-          form.reset();
-          const thankYou = document.getElementById('thankYouMessage');
-          thankYou.style.display = 'block';
-        } else {
-          alert('There was an error submitting the form.');
-        }
-      } catch (error) {
-        console.error('Form submission error:', error);
-        alert('Failed to submit. Please try again.');
+        responseData = await response.json();
+      } catch (parseError) {
+        // No body returned
       }
-    });
-  </script>
+
+      if (response.ok && responseData) {
+        form.reset();
+        thankYou.style.color = 'green';
+        thankYou.textContent = "✅ Thank you! Your submission was received. You can now submit another signal or deal.";
+      } else 
+        thankYou.style.color = 'red';
+        thankYou.textContent = "❌ Sorry, there was an error submitting your data. Please try again.";
+      }
+
+      thankYou.style.display = 'block';
+
+    } catch (error) {
+      console.error('Form submission error:', error);
+      const thankYou = document.getElementById('thankYouMessage');
+      thankYou.style.color = 'red';
+      thankYou.textContent = "❌ Submission failed. Please check your connection and try again.";
+      thankYou.style.display = 'block';
+    }
+  });
+</script>
+
 
 </body>
 </html>
