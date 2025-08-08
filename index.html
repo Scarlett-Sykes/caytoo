@@ -44,19 +44,29 @@
       font-size: 16px;
       box-sizing: border-box;
     }
-    .custom-button {
-      background: linear-gradient(180deg, #FF5476, #FF5156);
-      color: white;
+    .custom-submit-btn, .custom-rh-btn {
       font-weight: bold;
       padding: 10px 20px;
-      border: none;
       border-radius: 9999px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       font-size: 14px;
       cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       transition: background 0.3s ease;
+      height: 48px;
+      border: none;
     }
-    .custom-button:hover {
+    .custom-submit-btn {
+      background: linear-gradient(180deg, #FF5476, #FF5156);
+      color: white;
+    }
+    .custom-submit-btn:hover {
+      opacity: 0.9;
+    }
+    .custom-rh-btn {
+      background-color: #7e8186;
+      color: white;
+    }
+    .custom-rh-btn:hover {
       opacity: 0.9;
     }
     #thankYouMessage {
@@ -106,7 +116,12 @@
     <label for="sponsorship_date">Sponsorship Date:</label><br>
     <input type="date" id="sponsorship_date" name="sponsorship_date"><br><br>
 
-    <button type="submit" class="custom-button">Submit</button>
+    <div style="display: flex; gap: 12px; margin-top: 20px;">
+      <button type="submit" class="custom-submit-btn">Submit</button>
+      <button type="button" class="custom-rh-btn" onclick="window.open('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/753efac0-0ef1-446e-85f4-2d838af62d30', '_blank')">
+        RH
+      </button>
+    </div>
   </form>
 
   <div id="thankYouMessage"></div>
