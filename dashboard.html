@@ -5,7 +5,10 @@
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
-      background-color: #f5f5f5;
+      background-image: url('caytoo_Report cover template V2.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center 20%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -13,10 +16,24 @@
       min-height: 100vh;
       margin: 0;
       padding: 20px;
+      color: #fff;
+    }
+
+    .container {
+      background-color: rgba(50, 50, 50, 0.7); /* semi-transparent grey */
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
     }
 
     h1 {
-      margin-bottom: 40px;
+      margin: 0;
+      font-size: 2em;
+      text-align: center;
       color: white;
     }
 
@@ -39,26 +56,29 @@
       cursor: pointer;
       text-align: center;
       text-decoration: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.2s ease;
     }
 
     .custom-button:hover {
       opacity: 0.9;
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
 
-  <h1>Caytoo Automations</h1>
+  <div class="container">
+    <h1>Caytoo Automations</h1>
 
-  <div class="button-container">
-    <a href="https://scarlett-sykes.github.io/caytoo/" class="custom-button" target="_blank">Add a deal</a>
-    <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/edit-deal" class="custom-button" target="_blank">Edit a deal</a>
-    <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/add-rh" class="custom-button" target="_blank">Add a Rightsholder via URL</a>
-    <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/add-rh-manual" class="custom-button" target="_blank">Add a Rightsholder Manually</a>
-    <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/edit-rh" class="custom-button" target="_blank">Edit a Rightsholder</a>
-    <a href='https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/get-id' class="custom-button" target="_blank">Grab a Rightsholder ID</a>
-    <a href="https://caytoo.sharepoint.com/:l:/s/DatabaseProject/FJFqAv_Z-j9Ip9K9TgruZ7oBlfOjMaHo-wyd5gkPGqlIMw?nav=ZjQ0MzdlMjQtOWY1OC00N2JiLWE1YmYtNzIyNzJlMmFlZDRm" class="custom-button" target="_blank">Request shortlist</a>
+    <div class="button-container">
+      <a href="https://scarlett-sykes.github.io/caytoo/" class="custom-button" target="_blank">Add a deal</a>
+      <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/edit-deal" class="custom-button" target="_blank">Edit a deal</a>
+      <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/add-rh" class="custom-button" target="_blank">Add a Rightsholder via URL</a>
+      <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/add-rh-manual" class="custom-button" target="_blank">Add a Rightsholder Manually</a>
+      <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/edit-rh" class="custom-button" target="_blank">Edit a Rightsholder</a>
+      <a href='https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/get-id' class="custom-button" target="_blank">Grab a Rightsholder ID</a>
+      <a href="https://caytoo.sharepoint.com/:l:/s/DatabaseProject/FJFqAv_Z-j9Ip9K9TgruZ7oBlfOjMaHo-wyd5gkPGqlIMw?nav=ZjQ0MzdlMjQtOWY1OC00N2JiLWE1YmYtNzIyNzJlMmFlZDRm" class="custom-button" target="_blank">Request shortlist</a>
+    </div>
   </div>
 
 </body>
