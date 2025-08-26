@@ -61,13 +61,25 @@
       opacity: 0.9;
       transform: scale(1.03);
     }
+
+    /* New: inactive/disabled button styling */
+    .custom-button.inactive {
+      background: #e5e7eb;        /* grey background */
+      color: #6b7280;             /* grey text */
+      border: 1px solid #d1d5db;  /* subtle border */
+      cursor: not-allowed;
+      pointer-events: none;       /* prevents clicks */
+      box-shadow: none;
+      transform: none !important;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
 
   <h1>Caytoo Automations</h1>
 
-<div class="button-box">
+  <div class="button-box">
     <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/agh" 
        class="custom-button" 
        target="_blank">
@@ -93,23 +105,17 @@
     </a>
     
     <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/gpf" 
-       class="custom-button" 
-       target="_blank" 
-       style="text-decoration: line-through;">
+       class="custom-button inactive">
        Growth/performance
     </a>
     
     <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/mga" 
-       class="custom-button" 
-       target="_blank" 
-       style="text-decoration: line-through;">
+       class="custom-button inactive">
        Merger/acquisitions
     </a>
     
     <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/ptr" 
-       class="custom-button" 
-       target="_blank" 
-       style="text-decoration: line-through;">
+       class="custom-button inactive">
        Partnership
     </a>
     
@@ -120,19 +126,15 @@
     </a>
     
     <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/smh" 
-       class="custom-button" 
-       target="_blank" 
-       style="text-decoration: line-through;">
+       class="custom-button inactive">
        Senior marketer hire
     </a>
     
     <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/sph" 
-       class="custom-button" 
-       target="_blank" 
-       style="text-decoration: line-through;">
+       class="custom-button inactive">
        Senior person hire
     </a>
-</div>
+  </div>
 
 </body>
 </html>
