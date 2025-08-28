@@ -77,25 +77,18 @@
       opacity: 0.9;
       transform: scale(1.03);
     }
-
-    
+  
     /* New: inactive/disabled button styling */
     .custom-button.inactive {
       background: #e5e7eb;        /* grey background */
       color: #6b7280;             /* grey text */
       border: 1px solid #d1d5db;  /* subtle border */
+      cursor: not-allowed;
       pointer-events: none;       /* prevents clicks */
       box-shadow: none;
       transform: none !important;
       opacity: 0.8;
     }
-
-    /* Responsive layout */
-    @media screen and (max-width: 900px) {
-      .grid-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-      }
     }
   </style>
 </head>
@@ -110,7 +103,7 @@
       <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/deal" class="custom-button" target="_blank">Add a deal v2</a>
       <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/edit-deal" class="custom-button" target="_blank">Edit a deal</a>
       <a href="https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/form/merge-deal" class="custom-button" target="_blank">Merge deals</a>
-      <a href="https://scarlett-sykes.github.io/caytoo/" class="custom-button.inactive" target="_blank">Add a deal (old)</a>
+      <a href="https://scarlett-sykes.github.io/caytoo/" class="custom-button" target="_blank">Add a deal (old)</a>
     </div>
 
     <!-- Signals Box -->
