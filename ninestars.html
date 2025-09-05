@@ -315,20 +315,35 @@ function openBrandModal(brandId){
 
 
 // Submit brand form
-document.getElementById('brandForm').onsubmit=async function(e){
+document.getElementById('brandForm').onsubmit = async function(e) {
   e.preventDefault();
-  const data=Object.fromEntries(new FormData(e.target));
-  try{
-    await fetch'(https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand',{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data)
+  const data = Object.fromEntries(new FormData(e.target));
+  console.log("Submitting brand data:", data); // for debugging
+
+  try {
+    const res = await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
     });
-    signals=signals.filter(s=>s.BrandID!==data.brandId);
+
+    if (!res.ok) {
+      console.error("Webhook failed:", res.status, await res.text());
+      alert("Failed to validate brand");
+      return;
+    }
+
+    // Remove validated signal
+    signals = signals.filter(s => s.BrandID !== data.brandId);
     populateTable(signals);
+
     closeBrandModal();
-  }catch(err){console.error(err);}
-}
+  } catch (err) {
+    console.error("Error submitting brand:", err);
+    alert("Error submitting brand");
+  }
+};
+
 
 // Filters functions
 function applyFilters() {
