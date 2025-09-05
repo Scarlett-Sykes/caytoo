@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signal Table Test</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    #brandModal { 
+      display: none; 
+      position: fixed; 
+      top: 20%; left: 30%; 
+      background: white; 
+      padding: 20px; 
+      border: 1px solid #333; 
+    }
+  </style>
+</head>
+<body>
+
+<h2>Signals</h2>
+<table id="signalsTable">
+  <thead>
+    <tr>
+      <th>Signal ID</th>
+      <th>Brand ID</th>
+      <th>Type</th>
+      <th>Summary</th>
+      <th>Region</th>
+      <th>Country</th>
+      <th>City</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="brandModal">
+  <form id="brandForm">
+    <input type="hidden" name="brandId">
+    <label>Region: <input type="text" name="region"></label><br>
+    <label>Country: <input type="text" name="country"></label><br>
+    <label>City: <input type="text" name="city"></label><br>
+    <label>Summary: <textarea name="summary"></textarea></label><br>
+    <button type="submit">Save</button>
+    <button type="button" onclick="closeBrandModal()">Cancel</button>
+  </form>
+</div>
+
+<script>
+let signals = []; // make it global
+
+async function loadSignals() {
+  try {
+    const response = await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/fetch-signals');
+    signals = await response.json();
+    populateTable(signals);
+  } catch (err) {
+    console.error('Error fetching signals:', err);
+  }
+}
+
+function populateTable(signals) {
+  const tbody = document.querySelector('#signalsTable tbody');
+  tbody.innerHTML = '';
+
+  signals.forEach(signal => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${signal.intSignalId}</td>
+      <td>${signal.intbrandId}</td>
+      <td>${signal.strSignalType}</td>
+      <td>${signal.strSignalSummary}</td>
+      <td>${signal.strBrandRegion.trim()}</td>
+      <td>${signal.strCountry}</td>
+      <td>${signal.strCity}</td>
+      <td><button onclick="openBrandModal(${signal.intbrandId})">Validate Brand</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function openBrandModal(brandId) {
+  const signal = signals.find(s => s.intbrandId === brandId);
+  const form = document.getElementById('brandForm');
+  form.brandId.value = signal.intbrandId;
+  form.region.value = signal.strBrandRegion.trim();
+  form.country.value = signal.strCountry;
+  form.city.value = signal.strCity;
+  form.summary.value = signal.strSignalSummary;
+  document.getElementById('brandModal').style.display = 'block';
+}
+
+function closeBrandModal() {
+  document.getElementById('brandModal').style.display = 'none';
+}
+
+document.getElementById('brandForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const data = Object.fromEntries(new FormData(form));
+
+  // POST to your n8n update-brand webhook
+  await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  closeBrandModal();
+  loadSignals(); // refresh table
+};
+
+// initial load
+loadSignals();
+</script>
+
+</body>
+</html>
