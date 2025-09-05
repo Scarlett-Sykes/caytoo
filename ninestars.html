@@ -261,7 +261,9 @@ function populateTable(list){
         <div class="summary">${s.Summary||''}</div>
       </td>
       <td>
-        <button class="btn validate-btn" data-brandid="${String(s.BrandID)}">Validate Brand</button>
+          <button class="btn" onclick="openBrandModal(${s.BrandID})">Validate</button>
+          <button class="btn" onclick="dismissSignal(${s.BrandID})">Dismiss</button>
+          <button class="btn" onclick="flagSignal(${s.BrandID})">Flag</button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -366,6 +368,45 @@ document.getElementById('brandForm').onsubmit = async function(e) {
     alert("Error submitting brand. Please try again.");
   }
 };
+
+  async function dismissSignal(brandId) {
+  try {
+    // Send to webhook for dismissed signals
+    await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook/dismiss-signal', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ brandId })
+    });
+
+    // Optionally, mark it locally as dismissed to hide it immediately
+    signals = signals.filter(s => s.BrandID !== brandId);
+    populateTable(signals);
+
+  } catch(err) {
+    console.error("Error dismissing signal:", err);
+    alert("Failed to dismiss signal. Try again.");
+  }
+}
+
+async function flagSignal(brandId) {
+  try {
+    // Send to webhook for flagged signals
+    await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook/flag-merge', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ brandId })
+    });
+
+    // Optionally, remove it from the local list so it disappears
+    signals = signals.filter(s => s.BrandID !== brandId);
+    populateTable(signals);
+
+  } catch(err) {
+    console.error("Error flagging signal:", err);
+    alert("Failed to flag signal. Try again.");
+  }
+}
+
 
 // Filters
 function applyFilters() {
