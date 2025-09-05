@@ -89,13 +89,25 @@
       transform: translateY(-1px);
     }
     
-    /* Layout for action buttons (Validate / Dismiss / Flag) */
     .action-buttons {
       display: flex;
-      gap: 10px; /* spacing between buttons */
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 4px; /* vertical spacing between Validate and row below */
     }
-
+    
+    /* Row for Dismiss / Flag buttons */
+    .secondary-buttons-row {
+      display: flex;
+      gap: 4px; /* space between Dismiss and Flag */
+      width: 100%;
+    }
+    
+    .secondary-buttons-row .btn-small {
+      flex: 1; /* each takes 50% of row */
+      height: 28px;
+      padding: 4px 0;
+      font-size: 12px;
+    }
 
   /* Filters */
   #filters {
@@ -297,10 +309,13 @@ function populateTable(list){
       <td>
         <div class="action-buttons">
           <button class="btn primary-btn" onclick="openBrandModal(${s.BrandID})">Validate</button>
-          <button class="btn btn-small other-btn" onclick="dismissSignal(${s.SignalID})">Dismiss</button>
-          <button class="btn btn-small other-btn" onclick="flagSignal(${s.SignalID})">Flag</button>
+          <div class="secondary-buttons-row">
+            <button class="btn-small other-btn" onclick="dismissSignal(${s.BrandID})">Dismiss</button>
+            <button class="btn-small other-btn" onclick="flagSignal(${s.BrandID})">Flag</button>
+          </div>
         </div>
       </td>
+
 
     `;
     tbody.appendChild(tr);
