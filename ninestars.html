@@ -45,16 +45,11 @@
     font-size: 14px;
   }
 
-.action-buttons {
-  display: flex;
-  gap: 10px; /* spacing between buttons */
-  flex-wrap: wrap;
-}
-
 .btn {
   padding: 6px 16px;
   font-size: 14px;
-  height: 30px;
+  height: 28px;
+  width: 80px
   border-radius: 9999px;
   cursor: pointer;
   border: none;
@@ -63,31 +58,38 @@
   transition: opacity 0.3s ease, transform 0.1s ease;
 }
 
-/* Primary button */
-.validate-btn {
+/* Primary buttons (Go, Last 5 Days, Apply, Clear) */
+.primary-btn {
   background: linear-gradient(180deg, #FF5476, #FF5156);
 }
-.validate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.primary-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
 
-/* Smaller secondary buttons */
+/* Secondary buttons (Dismiss/Flag) */
 .btn-small {
   padding: 4px 10px;
   font-size: 12px;
-  height: 32px;
+  height: 28px;
+  width: 80px
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Dismiss = muted red */
 .other-btn {
   background: #FF7F7F;
 }
-
-
+  
 .btn-small:hover {
   opacity: 0.85;
   transform: translateY(-1px);
 }
 
+.action-buttons {
+  display: flex;
+  gap: 10px; /* spacing between Validate / Dismiss / Flag */
+  flex-wrap: wrap;
+}
 
   /* Filters */
   #filters {
@@ -181,8 +183,8 @@
 <div id="dateFilter">
   <label for="signalDate">Date:</label>
   <input type="date" id="signalDate">
-  <button class="btn" onclick="loadSignalsByDate()">Go</button>
-  <button class="btn" onclick="loadSignals()">Last 5 Days</button>
+  <button class="btn primary-btn" onclick="loadSignalsByDate()">Go</button>
+  <button class="btn primary-btn" onclick="loadSignals()">Last 5 Days</button>
 </div>
 
 <!-- Filters -->
@@ -193,8 +195,8 @@
   <label>HQ:
     <input type="text" id="filterHQ" placeholder="City or Country">
   </label>
-  <button class="btn" onclick="applyFilters()">Apply Filters</button>
-  <button class="btn" onclick="clearFilters()">Clear</button>
+  <button class="btn primary-btn" onclick="applyFilters()">Apply Filters</button>
+  <button class="btn primary-btn" onclick="clearFilters()">Clear</button>
   <span id="signalCount">0 Signals</span>
 </div>
 
@@ -288,7 +290,7 @@ function populateTable(list){
       </td>
       <td>
         <div class="action-buttons">
-          <button class="btn validate-btn" onclick="openBrandModal(${s.BrandID})">Validate</button>
+          <button class="btn primary-btn" onclick="openBrandModal(${s.BrandID})">Validate</button>
           <button class="btn btn-small other-btn" onclick="dismissSignal(${s.SignalID})">Dismiss</button>
           <button class="btn btn-small other-btn" onclick="flagSignal(${s.SignalID})">Flag</button>
         </div>
