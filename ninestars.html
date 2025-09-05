@@ -71,12 +71,13 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 4px 8px;
   }
-  td .grid div { font-size: 12px; }
+  td .grid div { font-size: 12px; color: #555; }
+  td .summary { margin-top: 4px; font-weight: normal; }
 
   #brandModal {
     display: none;
     position: fixed;
-    top: 10%;
+    top: 5%;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255,255,255,0.95);
@@ -84,11 +85,11 @@
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0,0,0,0.3);
     z-index: 1000;
-    width: 400px;
+    width: 600px;
     max-height: 90vh;
     overflow-y: auto;
   }
-  input[type="text"], select, textarea {
+  input[type="text"], input[type="url"], textarea, select {
     width: 100%;
     padding: 6px 8px;
     font-size: 14px;
@@ -134,6 +135,8 @@
   <form id="brandForm">
     <input type="hidden" name="brandId">
     <label>Brand Name: <input type="text" name="brandName" required></label><br>
+    <label>URL: <input type="url" name="url"></label><br>
+    <label>About: <textarea name="about"></textarea></label><br>
     <label>Subcategory:
       <select name="subcategory" id="subcategorySelect" required></select>
     </label><br>
@@ -183,13 +186,13 @@ function populateTable(signals){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>
-        <strong>${s.Summary||''}</strong><br>
         <div class="grid">
           <div><strong>HQ:</strong> ${s.HQ||''}</div>
           <div><strong>Type:</strong> ${s.SignalType||''}</div>
           <div><strong>Subcategory:</strong> ${s.Subcategory||''}</div>
           <div><strong>Date:</strong> ${s.SignalDate||''}</div>
         </div>
+        <div class="summary">${s.Summary||''}</div>
       </td>
       <td>
         <button class="custom-submit-btn" onclick="openBrandModal(${s.BrandID})">Validate Brand</button>
@@ -227,12 +230,13 @@ function openBrandModal(brandId){
   const form=document.getElementById('brandForm');
   form.brandId.value=signal.BrandID||'';
   form.brandName.value=signal.BrandName||'';
+  form.url.value=signal.URL||'';
+  form.about.value=signal.About||'';
   form.city.value=signal.City||'';
   form.region.value=signal.Region||'';
   form.country.value=signal.Country||'';
   form.revenue.value=signal.Revenue||'';
 
-  // Populate subcategory select
   const select=document.getElementById('subcategorySelect');
   select.innerHTML='';
   const placeholderOption=document.createElement('option');
@@ -241,7 +245,6 @@ function openBrandModal(brandId){
   placeholderOption.selected=true;
   placeholderOption.disabled=true;
   select.appendChild(placeholderOption);
-
   subcategories.forEach(sc=>{
     const opt=document.createElement('option');
     opt.value=sc;
@@ -263,7 +266,6 @@ document.getElementById('brandForm').onsubmit=async function(e){
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify(data)
     });
-    // Remove validated signal
     signals=signals.filter(s=>s.BrandID!==data.brandId);
     populateTable(signals);
     closeBrandModal();
