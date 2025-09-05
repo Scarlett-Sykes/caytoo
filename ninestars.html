@@ -281,6 +281,14 @@ function setDefaultDate(){
 }
 setDefaultDate();
 
+fetch(WEBHOOK_FETCH, {
+  method: "GET",
+  headers: {
+    "Authorization": "Basic " + btoa("admin:secret"),
+    "Content-Type": "application/json"
+  }
+});
+
 // Populate Subcategory filter dropdown
 const filterSubcategorySelect = document.getElementById('filterSubcategory');
 subcategories.forEach(sc=>{
