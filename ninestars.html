@@ -22,9 +22,10 @@
     text-align: left;
   }
 
+  /* Date selector */
   #dateFilter {
     width: 800px;
-    margin: 0 auto 20px auto;
+    margin: 0 auto 10px auto;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -51,6 +52,25 @@
   }
   #dateFilter button:hover { opacity: 0.9; }
 
+  /* Filters */
+  #filters {
+    width: 800px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255,255,255,0.9);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  #filters input, #filters select, #filters button {
+    font-size: 14px;
+    height: 36px;
+    padding: 4px 8px;
+  }
+
+  /* Table */
   table {
     width: 800px;
     margin: 0 auto 30px auto;
@@ -74,6 +94,7 @@
   td .grid div { font-size: 12px; color: #555; }
   td .summary { margin-top: 4px; font-weight: normal; }
 
+  /* Modal */
   #brandModal {
     display: none;
     position: fixed;
@@ -106,6 +127,7 @@
     background: linear-gradient(180deg, #FF5476, #FF5156);
     color: white;
     transition: opacity 0.3s ease;
+    margin-right: 6px;
   }
   .custom-submit-btn:hover { opacity: 0.9; }
 </style>
@@ -114,6 +136,7 @@
 
 <h2>Signals</h2>
 
+<!-- Date Selector -->
 <div id="dateFilter">
   <label for="signalDate">Date:</label>
   <input type="date" id="signalDate">
@@ -121,6 +144,19 @@
   <button onclick="loadSignals()">Last 5 Days</button>
 </div>
 
+<!-- Filters -->
+<div id="filters">
+  <label>Subcategory:
+    <select id="filterSubcategory"><option value="">All</option></select>
+  </label>
+  <label>HQ:
+    <input type="text" id="filterHQ" placeholder="City or Country">
+  </label>
+  <button onclick="applyFilters()">Apply Filters</button>
+  <button onclick="clearFilters()">Clear</button>
+</div>
+
+<!-- Table -->
 <table id="signalsTable">
   <thead>
     <tr>
@@ -131,19 +167,20 @@
   <tbody></tbody>
 </table>
 
+<!-- Modal -->
 <div id="brandModal">
   <form id="brandForm">
     <input type="hidden" name="brandId">
-    <label>Brand Name: <input type="text" name="brandName" required></label><br>
-    <label>URL: <input type="url" name="url"></label><br>
-    <label>About: <textarea name="about"></textarea></label><br>
+    <label>Brand Name: <input type="text" name="brandName" required></label>
+    <label>URL: <input type="url" name="url"></label>
+    <label>About: <textarea name="about"></textarea></label>
     <label>Subcategory:
       <select name="subcategory" id="subcategorySelect" required></select>
-    </label><br>
-    <label>City: <input type="text" name="city"></label><br>
-    <label>Region: <input type="text" name="region"></label><br>
-    <label>Country: <input type="text" name="country"></label><br>
-    <label>Revenue: <input type="text" name="revenue"></label><br>
+    </label>
+    <label>City: <input type="text" name="city"></label>
+    <label>Region: <input type="text" name="region"></label>
+    <label>Country: <input type="text" name="country"></label>
+    <label>Revenue: <input type="text" name="revenue"></label>
     <button type="submit" class="custom-submit-btn">Validate</button>
     <button type="button" class="custom-submit-btn" onclick="closeBrandModal()">Cancel</button>
   </form>
@@ -156,7 +193,20 @@ const WEBHOOK_UPDATE = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azureco
 let signals = [];
 
 const subcategories = [
-"Auto Components & Tyres","Auto Manufacturer","Auto Retail","Accessories & Watches (CG)","Clothing/Apparel (CG)","Electronics/Appliances (CG)","Home/Garden (CG)","Household Goods","Personal Goods","Gambling","Non-profit","Online Delivery Service","Restaurants & Bars","Specialised Consumer Service","Education","Banks","Crypto/Blockchain","Insurance","Investment/Trading","Loans","Payments/Transfer","Alcohol","Foods","Nutrition & Supplements","Soft Drinks","Health Service","Health/Sports Product","Pharmaceuticals","Sport/Leisure Facility","Agricultural/Food","Construction","Manufacturing/Engineering","Materials/Chemicals","Cybersecurity","IT Services/Hardware","Software","Broadcasting","Games","Music/Audio","Publishing","Consultancy/Tax","Legal","Recruitment/HR","Specialist Professional Service","Estate Agency","Property Development","Accessories & Watches (R)","Clothing/Apparel (R)","Electronics/Appliances (R)","General Retail","Grocery Retail","Home/Garden (R)","Speciality Retail","Landline Telecoms","Mobile Telecoms","Telecoms Infrastructure","Logistics","Ports & Marine","Rail & Road","Hotels & Cruise Lines","Airlines","Attractions","Tourist Board","Travel Agency","Energy","Water];
+"Auto Components & Tyres","Auto Manufacturer","Auto Retail","Accessories & Watches (CG)","Clothing/Apparel (CG)",
+"Electronics/Appliances (CG)","Home/Garden (CG)","Household Goods","Personal Goods","Gambling","Non-profit",
+"Online Delivery Service","Restaurants & Bars","Specialised Consumer Service","Education","Banks","Crypto/Blockchain",
+"Insurance","Investment/Trading","Loans","Payments/Transfer","Alcohol","Foods","Nutrition & Supplements",
+"Soft Drinks","Health Service","Health/Sports Product","Pharmaceuticals","Sport/Leisure Facility","Agricultural/Food",
+"Construction","Manufacturing/Engineering","Materials/Chemicals","Cybersecurity","IT Services/Hardware","Software",
+"Broadcasting","Games","Music/Audio","Publishing","Consultancy/Tax","Legal","Recruitment/HR","Specialist Professional Service",
+"Estate Agency","Property Development","Accessories & Watches (R)","Clothing/Apparel (R)","Electronics/Appliances (R)",
+"General Retail","Grocery Retail","Home/Garden (R)","Speciality Retail","Landline Telecoms","Mobile Telecoms",
+"Telecoms Infrastructure","Logistics","Ports & Marine","Rail & Road","Hotels & Cruise Lines","Airlines","Attractions",
+"Tourist Board","Travel Agency","Energy","Water"
+];
+
+// Set default date = yesterday
 function setDefaultDate(){
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate()-1);
@@ -164,8 +214,18 @@ function setDefaultDate(){
 }
 setDefaultDate();
 
+// Populate Subcategory filter dropdown
+const filterSubcategorySelect = document.getElementById('filterSubcategory');
+subcategories.forEach(sc=>{
+  const opt=document.createElement('option');
+  opt.value=sc;
+  opt.textContent=sc;
+  filterSubcategorySelect.appendChild(opt);
+});
+
 function safeTrim(v){ return v?v.trim():''; }
 
+// Populate table
 function populateTable(signals){
   const tbody=document.querySelector('#signalsTable tbody');
   tbody.innerHTML='';
@@ -189,6 +249,7 @@ function populateTable(signals){
   });
 }
 
+// Load signals (last 5 days)
 async function loadSignals(){
   try{
     const res=await fetch(WEBHOOK_FETCH);
@@ -197,6 +258,7 @@ async function loadSignals(){
   }catch(err){console.error(err);}
 }
 
+// Load signals by specific date
 async function loadSignalsByDate(){
   const dateInput=document.getElementById('signalDate').value;
   if(!dateInput){ alert("Please select a date"); return; }
@@ -211,6 +273,7 @@ async function loadSignalsByDate(){
   }catch(err){console.error(err);}
 }
 
+// Modal functions
 function openBrandModal(brandId){
   const signal=signals.find(s=>s.BrandID===brandId);
   if(!signal) return;
@@ -222,7 +285,7 @@ function openBrandModal(brandId){
   form.city.value=signal.City||'';
   form.region.value=signal.Region||'';
   form.country.value=signal.Country||'';
-  form.revenue.value=signal.Revenue ($)||'';
+  form.revenue.value=signal.Revenue (USD)||'';
 
   const select=document.getElementById('subcategorySelect');
   select.innerHTML='';
@@ -244,6 +307,7 @@ function openBrandModal(brandId){
 
 function closeBrandModal(){ document.getElementById('brandModal').style.display="none"; }
 
+// Submit brand form
 document.getElementById('brandForm').onsubmit=async function(e){
   e.preventDefault();
   const data=Object.fromEntries(new FormData(e.target));
@@ -259,7 +323,27 @@ document.getElementById('brandForm').onsubmit=async function(e){
   }catch(err){console.error(err);}
 }
 
-// initial load
+// Filters functions
+function applyFilters() {
+  const selectedSubcategory = filterSubcategorySelect.value;
+  const hqFilter = document.getElementById('filterHQ').value.toLowerCase();
+
+  const filteredSignals = signals.filter(s => {
+    const matchesSubcategory = selectedSubcategory ? s.Subcategory === selectedSubcategory : true;
+    const matchesHQ = hqFilter ? ((s.HQ||'').toLowerCase().includes(hqFilter)) : true;
+    return matchesSubcategory && matchesHQ;
+  });
+
+  populateTable(filteredSignals);
+}
+
+function clearFilters() {
+  filterSubcategorySelect.value = '';
+  document.getElementById('filterHQ').value = '';
+  populateTable(signals);
+}
+
+// Initial load
 loadSignals();
 </script>
 </body>
