@@ -319,7 +319,7 @@ document.getElementById('brandForm').onsubmit=async function(e){
   e.preventDefault();
   const data=Object.fromEntries(new FormData(e.target));
   try{
-    await fetch(WEBHOOK_UPDATE,{
+    await fetch'(https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand',{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify(data)
