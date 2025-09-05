@@ -46,24 +46,23 @@
   }
 
   /* Shared button style */
-.btn {
-  font-weight: bold;
-  padding: 8px 16px;
-  height: 36px;
-  border-radius: 9999px;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-  background: linear-gradient(180deg, #FF5476, #FF5156);
-  color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: opacity 0.3s ease, transform 0.1s ease;
-}
-
-.btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
+  .btn {
+    font-weight: bold;
+    padding: 8px 16px;
+    height: 36px;
+    border-radius: 9999px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    background: linear-gradient(180deg, #FF5476, #FF5156);
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: opacity 0.3s ease, transform 0.1s ease;
+  }
+  .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
 
   /* Filters */
   #filters {
@@ -80,20 +79,17 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     flex-wrap: wrap;
   }
-
   #filters label {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 14px;
   }
-
-  #filters input, #filters select, #filters button {
+  #filters input, #filters select {
     font-size: 14px;
     height: 36px;
     padding: 4px 8px;
   }
-
   #signalCount {
     margin-left: auto;
     font-weight: bold;
@@ -111,30 +107,19 @@
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
   }
-
   th, td {
     padding: 8px;
     font-size: 14px;
     vertical-align: top;
   }
-
   th { background-color: #f4f4f4; text-align: left; }
-
   td .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 4px 8px;
   }
-
-  td .grid div {
-    font-size: 12px;
-    color: #555;
-  }
-
-  td .summary {
-    margin-top: 4px;
-    font-weight: normal;
-  }
+  td .grid div { font-size: 12px; color: #555; }
+  td .summary { margin-top: 4px; font-weight: normal; }
 
   /* Modal */
   #brandModal {
@@ -161,16 +146,18 @@
     margin-bottom: 10px;
     box-sizing: border-box;
   }
+</style>
+</head>
+<body>
 
- 
 <h2>Signals</h2>
 
 <!-- Date Selector -->
 <div id="dateFilter">
   <label for="signalDate">Date:</label>
   <input type="date" id="signalDate">
-  <button onclick="loadSignalsByDate()">Go</button>
-  <button onclick="loadSignals()">Last 5 Days</button>
+  <button class="btn" onclick="loadSignalsByDate()">Go</button>
+  <button class="btn" onclick="loadSignals()">Last 5 Days</button>
 </div>
 
 <!-- Filters -->
@@ -181,8 +168,8 @@
   <label>HQ:
     <input type="text" id="filterHQ" placeholder="City or Country">
   </label>
-  <button onclick="applyFilters()">Apply Filters</button>
-  <button onclick="clearFilters()">Clear</button>
+  <button class="btn" onclick="applyFilters()">Apply Filters</button>
+  <button class="btn" onclick="clearFilters()">Clear</button>
   <span id="signalCount">0 Signals</span>
 </div>
 
@@ -217,7 +204,8 @@
 </div>
 
 <script>
-const WEBHOOK_FETCH = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook/fetch-signals";
+/** Adjust these if your working endpoints are the -test ones */
+const WEBHOOK_FETCH  = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook/fetch-signals";
 const WEBHOOK_UPDATE = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook/update-brand";
 
 let signals = [];
@@ -236,7 +224,7 @@ const subcategories = [
 "Tourist Board","Travel Agency","Energy","Water"
 ];
 
-// Set default date = yesterday
+// Default date = yesterday
 function setDefaultDate(){
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate()-1);
@@ -258,10 +246,10 @@ function updateSignalCount(count){
 }
 
 // Populate table
-function populateTable(signals){
+function populateTable(list){
   const tbody=document.querySelector('#signalsTable tbody');
   tbody.innerHTML='';
-  signals.forEach(s=>{
+  list.forEach(s=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td>
@@ -274,13 +262,21 @@ function populateTable(signals){
         <div class="summary">${s.Summary||''}</div>
       </td>
       <td>
-        <button class="btn" onclick="openBrandModal(${s.BrandID})">Validate Brand</button>
+        <button class="btn validate-btn" data-brandid="${String(s.BrandID)}">Validate Brand</button>
       </td>
     `;
     tbody.appendChild(tr);
   });
-  updateSignalCount(signals.length);
+  updateSignalCount(list.length);
 }
+
+// Event delegation for validate buttons (handles string/number BrandID)
+document.addEventListener('click', (e) => {
+  if (e.target.matches('.validate-btn')) {
+    const brandId = e.target.dataset.brandid;
+    openBrandModal(brandId);
+  }
+});
 
 // Load signals (last 5 days)
 async function loadSignals(){
@@ -308,7 +304,7 @@ async function loadSignalsByDate(){
 
 // Modal functions
 function openBrandModal(brandId){
-  const signal = signals.find(s => s.BrandID === brandId);
+  const signal = signals.find(s => String(s.BrandID) === String(brandId));
   if(!signal) return;
 
   const form = document.getElementById('brandForm');
@@ -323,23 +319,23 @@ function openBrandModal(brandId){
 
   const select = document.getElementById('subcategorySelect');
   select.innerHTML = '';
+  // placeholder shows current subcategory (not disabled so it's valid if they keep it)
   const placeholderOption = document.createElement('option');
-  placeholderOption.value = '';
+  placeholderOption.value = signal.Subcategory || '';
   placeholderOption.textContent = signal.Subcategory || 'Select Subcategory';
   placeholderOption.selected = true;
-  placeholderOption.disabled = true;
   select.appendChild(placeholderOption);
 
   subcategories.forEach(sc => {
     const opt = document.createElement('option');
     opt.value = sc;
     opt.textContent = sc;
-    select.appendChild(opt);
+    // avoid duplicating current value at top
+    if (sc !== signal.Subcategory) select.appendChild(opt);
   });
 
   document.getElementById('brandModal').style.display = "block";
 }
-
 function closeBrandModal(){
   document.getElementById('brandModal').style.display = "none";
 }
@@ -349,14 +345,6 @@ document.getElementById('brandForm').onsubmit = async function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target));
 
-  // If no new subcategory selected, use placeholder (current value)
-  if (!data.subcategory) {
-    const placeholder = document.querySelector('#subcategorySelect option[selected]');
-    if (placeholder && placeholder.textContent) {
-      data.subcategory = placeholder.textContent;
-    }
-  }
-
   try {
     const res = await fetch(WEBHOOK_UPDATE, {
       method: "POST",
@@ -364,13 +352,14 @@ document.getElementById('brandForm').onsubmit = async function(e) {
       body: JSON.stringify(data)
     });
 
-    if (res.status >= 200 && res.status < 300) {
+    if (res.ok) {
+      // Remove validated brand from the list
       signals = signals.filter(s => String(s.BrandID) !== String(data.brandId));
       populateTable(signals);
       closeBrandModal();
     } else {
       const errorMsg = await res.text();
-      console.error("Webhook returned an error:", errorMsg);
+      console.error("Webhook error:", errorMsg);
       alert("Failed to validate brand: " + (errorMsg || "Unknown error"));
     }
   } catch (err) {
@@ -379,7 +368,7 @@ document.getElementById('brandForm').onsubmit = async function(e) {
   }
 };
 
-// Filters functions
+// Filters
 function applyFilters() {
   const selectedSubcategory = filterSubcategorySelect.value;
   const hqFilter = document.getElementById('filterHQ').value.toLowerCase();
@@ -392,7 +381,6 @@ function applyFilters() {
 
   populateTable(filteredSignals);
 }
-
 function clearFilters() {
   filterSubcategorySelect.value = '';
   document.getElementById('filterHQ').value = '';
