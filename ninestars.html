@@ -144,7 +144,7 @@
     <label>Region: <input type="text" name="region"></label><br>
     <label>Country: <input type="text" name="country"></label><br>
     <label>Revenue: <input type="text" name="revenue"></label><br>
-    <button type="submit" class="custom-submit-btn">Save</button>
+    <button type="submit" class="custom-submit-btn">Validate</button>
     <button type="button" class="custom-submit-btn" onclick="closeBrandModal()">Cancel</button>
   </form>
 </div>
@@ -156,20 +156,7 @@ const WEBHOOK_UPDATE = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azureco
 let signals = [];
 
 const subcategories = [
-"Accessories & Watches (CG)","Accessories & Watches (R)","Hotels & Cruise Lines","Agricultural/Food",
-"Airlines","Alcohol","Attractions","Auto Components & Tyres","Auto Manufacturer","Auto Retail",
-"Banks","Broadcasting","Clothing/Apparel (CG)","Clothing/Apparel (R)","Construction","Consultancy/Tax",
-"Crypto/Blockchain","Cybersecurity","Education","Electronics/Appliances (CG)","Electronics/Appliances (R)",
-"Energy","Estate Agency","Foods","Gambling","Games","General Retail","Grocery Retail","Health Service",
-"Health/Sports Product","Home/Garden (CG)","Home/Garden (R)","Household Goods","Insurance","Investment/Trading",
-"IT Services/Hardware","Landline Telecoms","Legal","Loans","Logistics","Manufacturing/Engineering",
-"Materials/Chemicals","Mobile Telecoms","Music/Audio","Non-profit","Nutrition & Supplements",
-"Online Delivery Service","Payments/Transfer","Personal Goods","Pharmaceuticals","Ports & Marine",
-"Property Development","Publishing","Rail & Road","Recruitment/HR","Restaurants & Bars","Soft Drinks",
-"Software","Specialised Consumer Service","Specialist Professional Service","Speciality Retail",
-"Sport/Leisure Facility","Telecoms Infrastructure","Tourist Board","Travel Agency","Water"
-];
-
+"Auto Components & Tyres","Auto Manufacturer","Auto Retail","Accessories & Watches (CG)","Clothing/Apparel (CG)","Electronics/Appliances (CG)","Home/Garden (CG)","Household Goods","Personal Goods","Gambling","Non-profit","Online Delivery Service","Restaurants & Bars","Specialised Consumer Service","Education","Banks","Crypto/Blockchain","Insurance","Investment/Trading","Loans","Payments/Transfer","Alcohol","Foods","Nutrition & Supplements","Soft Drinks","Health Service","Health/Sports Product","Pharmaceuticals","Sport/Leisure Facility","Agricultural/Food","Construction","Manufacturing/Engineering","Materials/Chemicals","Cybersecurity","IT Services/Hardware","Software","Broadcasting","Games","Music/Audio","Publishing","Consultancy/Tax","Legal","Recruitment/HR","Specialist Professional Service","Estate Agency","Property Development","Accessories & Watches (R)","Clothing/Apparel (R)","Electronics/Appliances (R)","General Retail","Grocery Retail","Home/Garden (R)","Speciality Retail","Landline Telecoms","Mobile Telecoms","Telecoms Infrastructure","Logistics","Ports & Marine","Rail & Road","Hotels & Cruise Lines","Airlines","Attractions","Tourist Board","Travel Agency","Energy","Water];
 function setDefaultDate(){
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate()-1);
@@ -235,7 +222,7 @@ function openBrandModal(brandId){
   form.city.value=signal.City||'';
   form.region.value=signal.Region||'';
   form.country.value=signal.Country||'';
-  form.revenue.value=signal.Revenue||'';
+  form.revenue.value=signal.Revenue ($)||'';
 
   const select=document.getElementById('subcategorySelect');
   select.innerHTML='';
