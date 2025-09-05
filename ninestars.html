@@ -15,9 +15,11 @@
     margin: 0;
     padding: 0;
   }
+
   h2 {
     color: white;
-    width: 800px;
+    width: 90%;
+    max-width: 1200px;
     margin: 20px auto;
     text-align: left;
   }
@@ -26,7 +28,7 @@
   #dateFilter {
     width: 90%;
     max-width: 1200px;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 20px auto;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -34,42 +36,68 @@
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
   }
+
   #dateFilter input[type="date"] {
     height: 36px;
     padding: 4px 8px;
     font-size: 14px;
   }
-  #dateFilter button {
-    height: 36px;
-    font-size: 14px;
-    padding: 0 12px;
-    border-radius: 9999px;
-    border: none;
-    cursor: pointer;
-    background: linear-gradient(180deg, #FF5476, #FF5156);
-    color: white;
-    transition: opacity 0.3s ease;
-  }
-  #dateFilter button:hover { opacity: 0.9; }
+
+  /* Shared button style */
+.btn {
+  font-weight: bold;
+  padding: 8px 16px;
+  height: 36px;
+  border-radius: 9999px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(180deg, #FF5476, #FF5156);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
 
   /* Filters */
   #filters {
     width: 90%;
     max-width: 1200px;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 20px auto;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 8px;
     background-color: rgba(255,255,255,0.9);
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
   }
+
+  #filters label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+  }
+
   #filters input, #filters select, #filters button {
     font-size: 14px;
     height: 36px;
     padding: 4px 8px;
+  }
+
+  #signalCount {
+    margin-left: auto;
+    font-weight: bold;
+    color: #FF5156;
   }
 
   /* Table */
@@ -83,19 +111,30 @@
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
   }
+
   th, td {
     padding: 8px;
     font-size: 14px;
     vertical-align: top;
   }
+
   th { background-color: #f4f4f4; text-align: left; }
+
   td .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 4px 8px;
   }
-  td .grid div { font-size: 12px; color: #555; }
-  td .summary { margin-top: 4px; font-weight: normal; }
+
+  td .grid div {
+    font-size: 12px;
+    color: #555;
+  }
+
+  td .summary {
+    margin-top: 4px;
+    font-weight: normal;
+  }
 
   /* Modal */
   #brandModal {
@@ -114,6 +153,7 @@
     max-height: 90vh;
     overflow-y: auto;
   }
+
   input[type="text"], input[type="url"], textarea, select {
     width: 100%;
     padding: 6px 8px;
@@ -121,23 +161,8 @@
     margin-bottom: 10px;
     box-sizing: border-box;
   }
-  .custom-submit-btn {
-    font-weight: bold;
-    padding: 8px 16px;
-    border-radius: 9999px;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    background: linear-gradient(180deg, #FF5476, #FF5156);
-    color: white;
-    transition: opacity 0.3s ease;
-    margin-right: 6px;
-  }
-  .custom-submit-btn:hover { opacity: 0.9; }
-</style>
-</head>
-<body>
 
+ 
 <h2>Signals</h2>
 
 <!-- Date Selector -->
@@ -158,6 +183,7 @@
   </label>
   <button onclick="applyFilters()">Apply Filters</button>
   <button onclick="clearFilters()">Clear</button>
+  <span id="signalCount">0 Signals</span>
 </div>
 
 <!-- Table -->
@@ -179,14 +205,14 @@
     <label>URL: <input type="url" name="url"></label>
     <label>About: <textarea name="about"></textarea></label>
     <label>Subcategory:
-      <select name="subcategory" id="subcategorySelect"></select>
+      <select name="subcategory" id="subcategorySelect" required></select>
     </label>
     <label>City: <input type="text" name="city"></label>
     <label>Region: <input type="text" name="region"></label>
     <label>Country: <input type="text" name="country"></label>
     <label>Revenue: <input type="text" name="revenue"></label>
-    <button type="submit" class="custom-submit-btn">Validate</button>
-    <button type="button" class="custom-submit-btn" onclick="closeBrandModal()">Cancel</button>
+    <button type="submit" class="btn">Validate</button>
+    <button type="button" class="btn" onclick="closeBrandModal()">Cancel</button>
   </form>
 </div>
 
@@ -227,6 +253,10 @@ subcategories.forEach(sc=>{
   filterSubcategorySelect.appendChild(opt);
 });
 
+function updateSignalCount(count){
+  document.getElementById('signalCount').textContent = `${count} Signal${count!==1?'s':''}`;
+}
+
 // Populate table
 function populateTable(signals){
   const tbody=document.querySelector('#signalsTable tbody');
@@ -244,11 +274,12 @@ function populateTable(signals){
         <div class="summary">${s.Summary||''}</div>
       </td>
       <td>
-        <button class="custom-submit-btn" onclick="openBrandModal(${s.BrandID})">Validate Brand</button>
+        <button class="btn" onclick="openBrandModal(${s.BrandID})">Validate Brand</button>
       </td>
     `;
     tbody.appendChild(tr);
   });
+  updateSignalCount(signals.length);
 }
 
 // Load signals (last 5 days)
@@ -292,17 +323,14 @@ function openBrandModal(brandId){
 
   const select = document.getElementById('subcategorySelect');
   select.innerHTML = '';
+  const placeholderOption = document.createElement('option');
+  placeholderOption.value = '';
+  placeholderOption.textContent = signal.Subcategory || 'Select Subcategory';
+  placeholderOption.selected = true;
+  placeholderOption.disabled = true;
+  select.appendChild(placeholderOption);
 
-  // Pre-select current subcategory
-  const currentOpt = document.createElement('option');
-  currentOpt.value = signal.Subcategory || '';
-  currentOpt.textContent = signal.Subcategory || 'Select Subcategory';
-  currentOpt.selected = true;
-  select.appendChild(currentOpt);
-
-  // Add other subcategories except current one
-  subcategories.filter(sc => sc !== signal.Subcategory)
-               .forEach(sc => {
+  subcategories.forEach(sc => {
     const opt = document.createElement('option');
     opt.value = sc;
     opt.textContent = sc;
@@ -321,6 +349,14 @@ document.getElementById('brandForm').onsubmit = async function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target));
 
+  // If no new subcategory selected, use placeholder (current value)
+  if (!data.subcategory) {
+    const placeholder = document.querySelector('#subcategorySelect option[selected]');
+    if (placeholder && placeholder.textContent) {
+      data.subcategory = placeholder.textContent;
+    }
+  }
+
   try {
     const res = await fetch(WEBHOOK_UPDATE, {
       method: "POST",
@@ -328,7 +364,7 @@ document.getElementById('brandForm').onsubmit = async function(e) {
       body: JSON.stringify(data)
     });
 
-    if (res.ok) {
+    if (res.status >= 200 && res.status < 300) {
       signals = signals.filter(s => String(s.BrandID) !== String(data.brandId));
       populateTable(signals);
       closeBrandModal();
