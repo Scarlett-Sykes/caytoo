@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Signal Table Test</title>
+  <title>Signal Table</title>
   <style>
     table { border-collapse: collapse; width: 100%; }
     th, td { border: 1px solid #ccc; padding: 8px; }
@@ -15,6 +15,7 @@
       border: 1px solid #333; 
     }
     #dateFilter { margin-bottom: 15px; }
+    button { margin-right: 5px; }
   </style>
 </head>
 <body>
@@ -25,7 +26,7 @@
   <label for="signalDate">Select Date:</label>
   <input type="date" id="signalDate">
   <button onclick="loadSignalsByDate()">Get Signals</button>
-  <button onclick="loadSignals()">Get All Signals</button>
+  <button onclick="loadSignals()">Get Last 5 Days</button>
 </div>
 
 <table id="signalsTable">
@@ -57,9 +58,9 @@
 </div>
 
 <script>
-let signals = []; // global signals array
+let signals = []; // global array to hold current signals
 
-// Safe trim helper
+// Helper to safely trim strings
 function safeTrim(value) {
   return value ? value.trim() : '';
 }
@@ -68,6 +69,7 @@ function safeTrim(value) {
 function populateTable(signals) {
   const tbody = document.querySelector('#signalsTable tbody');
   tbody.innerHTML = '';
+
   signals.forEach(signal => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -78,13 +80,16 @@ function populateTable(signals) {
       <td>${safeTrim(signal.strBrandRegion)}</td>
       <td>${signal.strCountry || ''}</td>
       <td>${signal.strCity || ''}</td>
-      <td><button onclick="openBrandModal(${signal.intbrandId})">Validate Brand</button></td>
+      <td>
+        <button onclick="openBrandModal(${signal.intbrandId})">Validate Brand</button>
+        <button onclick="dismissSignal(${signal.intbrandId})">Dismiss</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// Load all signals
+// Fetch last 5 days signals (GET)
 async function loadSignals() {
   try {
     const response = await fetch('https://<your-n8n-webhook>/fetch-signals');
@@ -95,7 +100,7 @@ async function loadSignals() {
   }
 }
 
-// Load signals filtered by date
+// Fetch signals by specific date (POST)
 async function loadSignalsByDate() {
   const dateInput = document.getElementById('signalDate').value;
   if (!dateInput) {
@@ -104,7 +109,7 @@ async function loadSignalsByDate() {
   }
 
   try {
-    const response = await fetch('https://<your-n8n-webhook>/fetch-signals-by-date', {
+    const response = await fetch('https://<your-n8n-webhook>/fetch-signals', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date: dateInput })
@@ -136,7 +141,7 @@ function closeBrandModal() {
   document.getElementById('brandModal').style.display = 'none';
 }
 
-// Submit updated brand info
+// Submit updated brand info (Validate)
 document.getElementById('brandForm').onsubmit = async function(e) {
   e.preventDefault();
   const form = e.target;
@@ -148,14 +153,35 @@ document.getElementById('brandForm').onsubmit = async function(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
+
+    // Remove validated signal from table
+    signals = signals.filter(s => s.intbrandId !== data.brandId);
+    populateTable(signals);
+
     closeBrandModal();
-    loadSignals(); // refresh table
   } catch (err) {
     console.error('Error updating brand:', err);
   }
 };
 
-// Initial load: fetch all signals
+// Dismiss a signal
+async function dismissSignal(brandId) {
+  try {
+    await fetch('https://<your-n8n-webhook>/dismiss-signal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brandId })
+    });
+
+    // Remove dismissed signal from table
+    signals = signals.filter(s => s.intbrandId !== brandId);
+    populateTable(signals);
+  } catch (err) {
+    console.error('Error dismissing signal:', err);
+  }
+}
+
+// Initial load: last 5 days
 loadSignals();
 </script>
 
