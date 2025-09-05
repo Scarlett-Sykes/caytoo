@@ -34,11 +34,12 @@
     <tr>
       <th>Signal ID</th>
       <th>Brand ID</th>
+      <th>Brand Name</th>
+      <th>Subcategory</th>
+      <th>HQ</th>
       <th>Type</th>
       <th>Summary</th>
-      <th>Region</th>
-      <th>Country</th>
-      <th>City</th>
+      <th>Date</th>
       <th>Action</th>
     </tr>
   </thead>
@@ -58,130 +59,133 @@
 </div>
 
 <script>
-let signals = []; // global array to hold current signals
+let signals = [];
 
-// Helper to safely trim strings
-function safeTrim(value) {
-  return value ? value.trim() : '';
-}
+const WEBHOOK_URL = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/fetch-signals";
 
-// Populate table with signals
+// Safe trim helper
+function safeTrim(value) { return value ? value.trim() : ''; }
+
+// Populate table
 function populateTable(signals) {
   const tbody = document.querySelector('#signalsTable tbody');
   tbody.innerHTML = '';
-
   signals.forEach(signal => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${signal.intSignalId || ''}</td>
-      <td>${signal.intbrandId || ''}</td>
-      <td>${signal.strSignalType || ''}</td>
-      <td>${signal.strSignalSummary || ''}</td>
-      <td>${safeTrim(signal.strBrandRegion)}</td>
-      <td>${signal.strCountry || ''}</td>
-      <td>${signal.strCity || ''}</td>
+      <td>${signal.SignalID || ''}</td>
+      <td>${signal.BrandID || ''}</td>
+      <td>${signal.BrandName || ''}</td>
+      <td>${signal.Subcategory || ''}</td>
+      <td>${signal.HQ || ''}</td>
+      <td>${signal.SignalType || ''}</td>
+      <td>${signal.Summary || ''}</td>
+      <td>${signal.SignalDate || ''}</td>
       <td>
-        <button onclick="openBrandModal(${signal.intbrandId})">Validate Brand</button>
-        <button onclick="dismissSignal(${signal.intbrandId})">Dismiss</button>
+        <button onclick="openBrandModal(${signal.BrandID})">Validate Brand</button>
+        <button onclick="dismissSignal(${signal.BrandID})">Dismiss</button>
       </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// Fetch last 5 days signals (GET)
+// Fetch last 5 days (GET)
 async function loadSignals() {
+  console.log("Fetching last 5 days...");
   try {
-    const response = await fetch('https://<your-n8n-webhook>/fetch-signals');
-    signals = await response.json();
+    const response = await fetch(WEBHOOK_URL);
+    const data = await response.json();
+    console.log("Signals fetched:", data);
+    signals = data;
     populateTable(signals);
   } catch (err) {
-    console.error('Error fetching signals:', err);
+    console.error("Error fetching last 5 days:", err);
   }
 }
 
-// Fetch signals by specific date (POST)
+// Fetch signals for a specific date (POST)
 async function loadSignalsByDate() {
   const dateInput = document.getElementById('signalDate').value;
   if (!dateInput) {
-    alert('Please select a date');
+    alert("Please select a date");
     return;
   }
 
+  console.log("Fetching signals for date:", dateInput);
+
   try {
-    const response = await fetch('https://<your-n8n-webhook>/fetch-signals', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ date: dateInput })
     });
-    signals = await response.json();
+    const data = await response.json();
+    console.log("Signals fetched for date:", data);
+    signals = data;
     populateTable(signals);
   } catch (err) {
-    console.error('Error fetching signals by date:', err);
+    console.error("Error fetching signals by date:", err);
   }
 }
 
-// Open modal to edit brand
+// Open modal
 function openBrandModal(brandId) {
-  const signal = signals.find(s => s.intbrandId === brandId);
+  const signal = signals.find(s => s.BrandID === brandId);
   if (!signal) return;
 
   const form = document.getElementById('brandForm');
-  form.brandId.value = signal.intbrandId || '';
-  form.region.value = safeTrim(signal.strBrandRegion);
-  form.country.value = signal.strCountry || '';
-  form.city.value = signal.strCity || '';
-  form.summary.value = signal.strSignalSummary || '';
+  form.brandId.value = signal.BrandID || '';
+  form.region.value = safeTrim(signal.Region);
+  form.country.value = safeTrim(signal.Country);
+  form.city.value = safeTrim(signal.City);
+  form.summary.value = signal.Summary || '';
 
-  document.getElementById('brandModal').style.display = 'block';
+  document.getElementById('brandModal').style.display = "block";
 }
 
 // Close modal
-function closeBrandModal() {
-  document.getElementById('brandModal').style.display = 'none';
-}
+function closeBrandModal() { document.getElementById('brandModal').style.display = "none"; }
 
-// Submit updated brand info (Validate)
+// Submit validation
 document.getElementById('brandForm').onsubmit = async function(e) {
   e.preventDefault();
   const form = e.target;
   const data = Object.fromEntries(new FormData(form));
 
   try {
-    await fetch('https://<your-n8n-webhook>/update-brand', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
 
-    // Remove validated signal from table
-    signals = signals.filter(s => s.intbrandId !== data.brandId);
+    // Remove validated signal
+    signals = signals.filter(s => s.BrandID !== data.brandId);
     populateTable(signals);
-
     closeBrandModal();
   } catch (err) {
-    console.error('Error updating brand:', err);
+    console.error("Error validating brand:", err);
   }
 };
 
-// Dismiss a signal
+// Dismiss signal
 async function dismissSignal(brandId) {
   try {
-    await fetch('https://<your-n8n-webhook>/dismiss-signal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/dismiss-signal', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ brandId })
     });
 
-    // Remove dismissed signal from table
-    signals = signals.filter(s => s.intbrandId !== brandId);
+    signals = signals.filter(s => s.BrandID !== brandId);
     populateTable(signals);
   } catch (err) {
-    console.error('Error dismissing signal:', err);
+    console.error("Error dismissing signal:", err);
   }
 }
 
-// Initial load: last 5 days
+// Initial load
 loadSignals();
 </script>
 
