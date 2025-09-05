@@ -91,10 +91,14 @@
     .action-buttons {
       display: flex;
       flex-direction: column;
-      gap: 4px; /* vertical spacing between Validate and row below */
+      gap: 8px; /* bigger gap under Validate */
+      width: 120px; /* define a fixed width for the whole column */
     }
     
-    /* Row for Dismiss / Flag buttons */
+    .action-buttons .btn {
+      width: 100%; /* Validate now matches column width */
+    }
+    
     .secondary-buttons-row {
       display: flex;
       gap: 4px; /* space between Dismiss and Flag */
@@ -102,7 +106,7 @@
     }
     
     .secondary-buttons-row .btn-small {
-      flex: 1; /* each takes 50% of row */
+      flex: 1; /* each takes half of the row */
       height: 28px;
       padding: 4px 0;
       font-size: 12px;
