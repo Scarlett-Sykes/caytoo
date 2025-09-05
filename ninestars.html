@@ -48,7 +48,7 @@
   /* Shared button style */
   .btn {
     padding: 4px 8px;
-    height: 40px;
+    height: 20px;
     border-radius: 9999px;
     font-size: 14px;
     cursor: pointer;
@@ -261,9 +261,9 @@ function populateTable(list){
         <div class="summary">${s.Summary||''}</div>
       </td>
       <td>
-          <button class="btn" onclick="openBrandModal(${s.BrandID})">Validate</button>
-          <button class="btn" onclick="dismissSignal(${s.BrandID})">Dismiss</button>
-          <button class="btn" onclick="flagSignal(${s.BrandID})">Flag</button>
+          <button class="btn" onclick="openBrandModal(${s.SignalID})">Validate</button>
+          <button class="btn" onclick="dismissSignal(${s.SignalID})">Dismiss</button>
+          <button class="btn" onclick="flagSignal(${s.SignalID})">Flag</button>
       </td>
     `;
     tbody.appendChild(tr);
