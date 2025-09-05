@@ -24,8 +24,8 @@
 
   /* Date selector */
   #dateFilter {
-    width: 90%;        /* takes 90% of screen width */
-    max-width: 1200px; /* doesn’t grow too large on big screens */
+    width: 90%;
+    max-width: 1200px;
     margin: 0 auto 30px auto;
     display: flex;
     align-items: center;
@@ -55,8 +55,8 @@
 
   /* Filters */
   #filters {
-    width: 90%;        /* takes 90% of screen width */
-    max-width: 1200px; /* doesn’t grow too large on big screens */
+    width: 90%;
+    max-width: 1200px;
     margin: 0 auto 30px auto;
     display: flex;
     align-items: center;
@@ -73,17 +73,16 @@
   }
 
   /* Table */
-table {
-  width: 90%;        /* takes 90% of screen width */
-  max-width: 1200px; /* doesn’t grow too large on big screens */
-  margin: 0 auto 30px auto;
-  border-collapse: collapse;
-  background-color: rgba(255,255,255,0.9);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
+  table {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto 30px auto;
+    border-collapse: collapse;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
   th, td {
     padding: 8px;
     font-size: 14px;
@@ -99,23 +98,22 @@ table {
   td .summary { margin-top: 4px; font-weight: normal; }
 
   /* Modal */
-#brandModal {
-  display: none;
-  position: fixed;
-  top: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.95);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  z-index: 1000;
-  width: 90%;      /* responsive width */
-  max-width: 600px;/* doesn’t get too wide */
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
+  #brandModal {
+    display: none;
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.95);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
   input[type="text"], input[type="url"], textarea, select {
     width: 100%;
     padding: 6px 8px;
@@ -181,7 +179,7 @@ table {
     <label>URL: <input type="url" name="url"></label>
     <label>About: <textarea name="about"></textarea></label>
     <label>Subcategory:
-      <select name="subcategory" id="subcategorySelect" required></select>
+      <select name="subcategory" id="subcategorySelect"></select>
     </label>
     <label>City: <input type="text" name="city"></label>
     <label>Region: <input type="text" name="region"></label>
@@ -228,8 +226,6 @@ subcategories.forEach(sc=>{
   opt.textContent=sc;
   filterSubcategorySelect.appendChild(opt);
 });
-
-function safeTrim(v){ return v?v.trim():''; }
 
 // Populate table
 function populateTable(signals){
@@ -292,18 +288,21 @@ function openBrandModal(brandId){
   form.city.value = signal.City || '';
   form.region.value = signal.Region || '';
   form.country.value = signal.Country || '';
-  form.revenue.value = signal.RevenueUSD || '';  // <-- corrected
+  form.revenue.value = signal.RevenueUSD || '';
 
   const select = document.getElementById('subcategorySelect');
   select.innerHTML = '';
-  const placeholderOption = document.createElement('option');
-  placeholderOption.value = '';
-  placeholderOption.textContent = signal.Subcategory || 'Select Subcategory';
-  placeholderOption.selected = true;
-  placeholderOption.disabled = true;
-  select.appendChild(placeholderOption);
 
-  subcategories.forEach(sc => {
+  // Pre-select current subcategory
+  const currentOpt = document.createElement('option');
+  currentOpt.value = signal.Subcategory || '';
+  currentOpt.textContent = signal.Subcategory || 'Select Subcategory';
+  currentOpt.selected = true;
+  select.appendChild(currentOpt);
+
+  // Add other subcategories except current one
+  subcategories.filter(sc => sc !== signal.Subcategory)
+               .forEach(sc => {
     const opt = document.createElement('option');
     opt.value = sc;
     opt.textContent = sc;
@@ -313,6 +312,9 @@ function openBrandModal(brandId){
   document.getElementById('brandModal').style.display = "block";
 }
 
+function closeBrandModal(){
+  document.getElementById('brandModal').style.display = "none";
+}
 
 // Submit brand form
 document.getElementById('brandForm').onsubmit = async function(e) {
@@ -320,20 +322,17 @@ document.getElementById('brandForm').onsubmit = async function(e) {
   const data = Object.fromEntries(new FormData(e.target));
 
   try {
-    const res = await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand', {
+    const res = await fetch(WEBHOOK_UPDATE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
 
-    // ✅ If webhook succeeds, close modal & update table
-    if (res.status >= 200 && res.status < 300) {
-      // Remove the validated brand from the signals array
+    if (res.ok) {
       signals = signals.filter(s => String(s.BrandID) !== String(data.brandId));
       populateTable(signals);
       closeBrandModal();
     } else {
-      // If server sends a 4xx or 5xx, show its message if available
       const errorMsg = await res.text();
       console.error("Webhook returned an error:", errorMsg);
       alert("Failed to validate brand: " + (errorMsg || "Unknown error"));
@@ -343,7 +342,6 @@ document.getElementById('brandForm').onsubmit = async function(e) {
     alert("Error submitting brand. Please try again.");
   }
 };
-
 
 // Filters functions
 function applyFilters() {
