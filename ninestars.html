@@ -48,16 +48,21 @@
 </div>
 
 <script>
-let signals = []; // make it global
+let signals = []; // global signals array
 
 async function loadSignals() {
   try {
     const response = await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/fetch-signals');
     signals = await response.json();
+    console.log('Fetched signals:', signals);
     populateTable(signals);
   } catch (err) {
     console.error('Error fetching signals:', err);
   }
+}
+
+function safeTrim(value) {
+  return value ? value.trim() : '';
 }
 
 function populateTable(signals) {
@@ -67,13 +72,13 @@ function populateTable(signals) {
   signals.forEach(signal => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${signal.intSignalId}</td>
-      <td>${signal.intbrandId}</td>
-      <td>${signal.strSignalType}</td>
-      <td>${signal.strSignalSummary}</td>
-      <td>${signal.strBrandRegion.trim()}</td>
-      <td>${signal.strCountry}</td>
-      <td>${signal.strCity}</td>
+      <td>${signal.intSignalId || ''}</td>
+      <td>${signal.intbrandId || ''}</td>
+      <td>${signal.strSignalType || ''}</td>
+      <td>${signal.strSignalSummary || ''}</td>
+      <td>${safeTrim(signal.strBrandRegion)}</td>
+      <td>${signal.strCountry || ''}</td>
+      <td>${signal.strCity || ''}</td>
       <td><button onclick="openBrandModal(${signal.intbrandId})">Validate Brand</button></td>
     `;
     tbody.appendChild(tr);
@@ -82,12 +87,15 @@ function populateTable(signals) {
 
 function openBrandModal(brandId) {
   const signal = signals.find(s => s.intbrandId === brandId);
+  if (!signal) return;
+
   const form = document.getElementById('brandForm');
-  form.brandId.value = signal.intbrandId;
-  form.region.value = signal.strBrandRegion.trim();
-  form.country.value = signal.strCountry;
-  form.city.value = signal.strCity;
-  form.summary.value = signal.strSignalSummary;
+  form.brandId.value = signal.intbrandId || '';
+  form.region.value = safeTrim(signal.strBrandRegion);
+  form.country.value = signal.strCountry || '';
+  form.city.value = signal.strCity || '';
+  form.summary.value = signal.strSignalSummary || '';
+  
   document.getElementById('brandModal').style.display = 'block';
 }
 
@@ -100,7 +108,6 @@ document.getElementById('brandForm').onsubmit = async function(e) {
   const form = e.target;
   const data = Object.fromEntries(new FormData(form));
 
-  // POST to your n8n update-brand webhook
   await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
