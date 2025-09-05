@@ -281,37 +281,38 @@ async function loadSignalsByDate(){
 
 // Modal functions
 function openBrandModal(brandId){
-  const signal=signals.find(s=>s.BrandID===brandId);
+  const signal = signals.find(s => s.BrandID === brandId);
   if(!signal) return;
-  const form=document.getElementById('brandForm');
-  form.brandId.value=signal.BrandID||'';
-  form.brandName.value=signal.BrandName||'';
-  form.url.value=signal.URL||'';
-  form.about.value=signal.About||'';
-  form.city.value=signal.City||'';
-  form.region.value=signal.Region||'';
-  form.country.value=signal.Country||'';
-  form.revenue.value=signal.Revenue (USD)||'';
 
-  const select=document.getElementById('subcategorySelect');
-  select.innerHTML='';
-  const placeholderOption=document.createElement('option');
-  placeholderOption.value='';
-  placeholderOption.textContent=signal.Subcategory||'Select Subcategory';
-  placeholderOption.selected=true;
-  placeholderOption.disabled=true;
+  const form = document.getElementById('brandForm');
+  form.brandId.value = signal.BrandID || '';
+  form.brandName.value = signal.BrandName || '';
+  form.url.value = signal.URL || '';
+  form.about.value = signal.About || '';
+  form.city.value = signal.City || '';
+  form.region.value = signal.Region || '';
+  form.country.value = signal.Country || '';
+  form.revenue.value = signal.RevenueUSD || '';  // <-- corrected
+
+  const select = document.getElementById('subcategorySelect');
+  select.innerHTML = '';
+  const placeholderOption = document.createElement('option');
+  placeholderOption.value = '';
+  placeholderOption.textContent = signal.Subcategory || 'Select Subcategory';
+  placeholderOption.selected = true;
+  placeholderOption.disabled = true;
   select.appendChild(placeholderOption);
-  subcategories.forEach(sc=>{
-    const opt=document.createElement('option');
-    opt.value=sc;
-    opt.textContent=sc;
+
+  subcategories.forEach(sc => {
+    const opt = document.createElement('option');
+    opt.value = sc;
+    opt.textContent = sc;
     select.appendChild(opt);
   });
 
-  document.getElementById('brandModal').style.display="block";
+  document.getElementById('brandModal').style.display = "block";
 }
 
-function closeBrandModal(){ document.getElementById('brandModal').style.display="none"; }
 
 // Submit brand form
 document.getElementById('brandForm').onsubmit=async function(e){
