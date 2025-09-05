@@ -318,7 +318,6 @@ function openBrandModal(brandId){
 document.getElementById('brandForm').onsubmit = async function(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target));
-  console.log("Submitting brand data:", data); // for debugging
 
   try {
     const res = await fetch('https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand', {
@@ -327,20 +326,21 @@ document.getElementById('brandForm').onsubmit = async function(e) {
       body: JSON.stringify(data)
     });
 
-    if (!res.ok) {
-      console.error("Webhook failed:", res.status, await res.text());
-      alert("Failed to validate brand");
-      return;
+    // ✅ If webhook succeeds, close modal & update table
+    if (res.status >= 200 && res.status < 300) {
+      // Remove the validated brand from the signals array
+      signals = signals.filter(s => String(s.BrandID) !== String(data.brandId));
+      populateTable(signals);
+      closeBrandModal();
+    } else {
+      // If server sends a 4xx or 5xx, show its message if available
+      const errorMsg = await res.text();
+      console.error("Webhook returned an error:", errorMsg);
+      alert("Failed to validate brand: " + (errorMsg || "Unknown error"));
     }
-
-    // Remove validated signal
-    signals = signals.filter(s => s.BrandID !== data.brandId);
-    populateTable(signals);
-
-    closeBrandModal();
   } catch (err) {
-    console.error("Error submitting brand:", err);
-    alert("Error submitting brand");
+    console.error("Network error:", err);
+    alert("Error submitting brand. Please try again.");
   }
 };
 
