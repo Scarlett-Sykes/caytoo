@@ -1,16 +1,265 @@
-function openBrandModal(brandId) {
-  const signal = signals.find(s => s.BrandID === brandId);
-  if (!signal) return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signal Table</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-image: url('caytoo_Report cover template V2.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center 20%;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
 
-  const form = document.getElementById('brandForm');
-  form.brandId.value = signal.BrandID || '';
-  form.brandName.value = signal.BrandName || '';
-  form.category.value = signal.Category || '';
-  form.subcategory.value = signal.Subcategory || '';
-  form.city.value = signal.City || '';
-  form.region.value = signal.Region || '';
-  form.country.value = signal.Country || '';
-  form.revenue.value = signal.Revenue || '';
+    h2 {
+      color: white;
+      width: 800px;
+      margin: 20px auto;
+      text-align: left;
+    }
 
-  document.getElementById('brandModal').style.display = "block";
+    table {
+      border-collapse: collapse;
+      width: 800px;
+      margin: 0 auto 30px auto;
+      background-color: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    th, td {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+
+    #dateFilter {
+      width: 800px;
+      margin: 0 auto 20px auto;
+      text-align: left;
+      background-color: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    input[type="date"], input[type="text"], select, textarea {
+      padding: 8px;
+      font-size: 14px;
+      width: 100%;
+      max-width: 780px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    #brandModal {
+      display: none; 
+      position: fixed; 
+      top: 10%; left: 50%; 
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95); 
+      padding: 20px; 
+      border-radius: 10px; 
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+      width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .custom-submit-btn, .custom-rh-btn {
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: opacity 0.3s ease;
+      height: 48px;
+      border: none;
+    }
+    .custom-submit-btn {
+      background: linear-gradient(180deg, #FF5476, #FF5156);
+      color: white;
+      margin-right: 10px;
+    }
+    .custom-submit-btn:hover {
+      opacity: 0.9;
+    }
+    .custom-rh-btn {
+      background: linear-gradient(180deg, #FF5476, #FF5156);
+      color: white;
+    }
+    .custom-rh-btn:hover {
+      opacity: 0.9;
+    }
+
+  </style>
+</head>
+<body>
+
+<h2>Signals</h2>
+
+<div id="dateFilter">
+  <label for="signalDate">Select Date:</label>
+  <input type="date" id="signalDate">
+  <button class="custom-submit-btn" onclick="loadSignalsByDate()">Get Signals</button>
+  <button class="custom-rh-btn" onclick="loadSignals()">Get Last 5 Days</button>
+</div>
+
+<table id="signalsTable">
+  <thead>
+    <tr>
+      <th>Signal ID</th>
+      <th>Brand ID</th>
+      <th>Brand Name</th>
+      <th>Subcategory</th>
+      <th>HQ</th>
+      <th>Type</th>
+      <th>Summary</th>
+      <th>Date</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="brandModal">
+  <form id="brandForm">
+    <input type="hidden" name="brandId">
+
+    <label>Brand Name: <input type="text" name="brandName" required></label><br>
+    <label>Category: <input type="text" name="category"></label><br>
+    <label>Subcategory:
+      <select name="subcategory" required>
+        <option value="">--Select Subcategory--</option>
+        <!-- add all subcategories here -->
+        <option value="Accessories & Watches (CG)">Accessories & Watches (CG)</option>
+        <option value="Accessories & Watches (R)">Accessories & Watches (R)</option>
+        <option value="Hotels & Cruise Lines">Hotels & Cruise Lines</option>
+        <!-- …etc… -->
+      </select>
+    </label><br>
+    <label>City: <input type="text" name="city"></label><br>
+    <label>Region: <input type="text" name="region"></label><br>
+    <label>Country: <input type="text" name="country"></label><br>
+    <label>Revenue: <input type="text" name="revenue"></label><br>
+
+    <button type="submit" class="custom-submit-btn">Save</button>
+    <button type="button" class="custom-rh-btn" onclick="closeBrandModal()">Cancel</button>
+  </form>
+</div>
+
+<script>
+let signals = [];
+const WEBHOOK_FETCH = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/fetch-signals";
+const WEBHOOK_UPDATE = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/update-brand";
+const WEBHOOK_DISMISS = "https://caytoo-ops-n8n.bravepond-37f4561a.ukwest.azurecontainerapps.io/webhook-test/dismiss-signal";
+
+function safeTrim(v){return v?v.trim():'';}
+
+function populateTable(signals){
+  const tbody = document.querySelector('#signalsTable tbody');
+  tbody.innerHTML='';
+  signals.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td>${s.SignalID||''}</td>
+      <td>${s.BrandID||''}</td>
+      <td>${s.BrandName||''}</td>
+      <td>${s.Subcategory||''}</td>
+      <td>${s.HQ||''}</td>
+      <td>${s.SignalType||''}</td>
+      <td>${s.Summary||''}</td>
+      <td>${s.SignalDate||''}</td>
+      <td>
+        <button class="custom-submit-btn" onclick="openBrandModal(${s.BrandID})">Validate Brand</button>
+        <button class="custom-rh-btn" onclick="dismissSignal(${s.BrandID})">Dismiss</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
+
+async function loadSignals(){
+  try{
+    const res=await fetch(WEBHOOK_FETCH);
+    const data=await res.json();
+    signals=data;
+    populateTable(signals);
+  }catch(err){console.error(err);}
+}
+
+async function loadSignalsByDate(){
+  const dateInput=document.getElementById('signalDate').value;
+  if(!dateInput){ alert("Please select a date"); return; }
+  try{
+    const res=await fetch(WEBHOOK_FETCH,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({date:dateInput})
+    });
+    const data=await res.json();
+    signals=data;
+    populateTable(signals);
+  }catch(err){console.error(err);}
+}
+
+function openBrandModal(brandId){
+  const signal=signals.find(s=>s.BrandID===brandId);
+  if(!signal) return;
+  const form=document.getElementById('brandForm');
+  form.brandId.value=signal.BrandID||'';
+  form.brandName.value=signal.BrandName||'';
+  form.category.value=signal.Category||'';
+  form.subcategory.value=signal.Subcategory||'';
+  form.city.value=signal.City||'';
+  form.region.value=signal.Region||'';
+  form.country.value=signal.Country||'';
+  form.revenue.value=signal.Revenue||'';
+  document.getElementById('brandModal').style.display="block";
+}
+
+function closeBrandModal(){document.getElementById('brandModal').style.display="none";}
+
+document.getElementById('brandForm').onsubmit=async function(e){
+  e.preventDefault();
+  const data=Object.fromEntries(new FormData(e.target));
+  try{
+    await fetch(WEBHOOK_UPDATE,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(data)
+    });
+    signals=signals.filter(s=>s.BrandID!==data.brandId);
+    populateTable(signals);
+    closeBrandModal();
+  }catch(err){console.error(err);}
+}
+
+async function dismissSignal(brandId){
+  try{
+    await fetch(WEBHOOK_DISMISS,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({brandId})
+    });
+    signals=signals.filter(s=>s.BrandID!==brandId);
+    populateTable(signals);
+  }catch(err){console.error(err);}
+}
+
+// initial load
+loadSignals();
+</script>
+</body>
+</html>
