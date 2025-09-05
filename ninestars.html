@@ -45,24 +45,49 @@
     font-size: 14px;
   }
 
-  /* Shared button style */
-  .btn {
-    padding: 8px 8px;
-    height: 30px;
-    width: 100px;
-    border-radius: 9999px;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    background: linear-gradient(180deg, #FF5476, #FF5156);
-    color: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: opacity 0.3s ease, transform 0.1s ease;
-  }
-  .btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
+.action-buttons {
+  display: flex;
+  gap: 10px; /* spacing between buttons */
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 6px 16px;
+  font-size: 14px;
+  height: 40px;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: none;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease, transform 0.1s ease;
+}
+
+/* Primary button */
+.validate-btn {
+  background: linear-gradient(180deg, #FF5476, #FF5156);
+}
+.validate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* Smaller secondary buttons */
+.btn-small {
+  padding: 4px 10px;
+  font-size: 12px;
+  height: 32px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Dismiss = muted red */
+.other-btn {
+  background: #FF7F7F;
+}
+
+
+.btn-small:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
 
   /* Filters */
   #filters {
@@ -262,10 +287,13 @@ function populateTable(list){
         <div class="summary">${s.Summary||''}</div>
       </td>
       <td>
-          <button class="btn" onclick="openBrandModal(${s.SignalID})">Validate</button>
-          <button class="btn" onclick="dismissSignal(${s.SignalID})">Dismiss</button>
-          <button class="btn" onclick="flagSignal(${s.SignalID})">Flag</button>
+        <div class="action-buttons">
+          <button class="btn validate-btn" onclick="openBrandModal(${s.BrandID})">Validate</button>
+          <button class="btn btn-small other-btn" onclick="dismissSignal(${s.SignalID})">Dismiss</button>
+          <button class="btn btn-small other-btn" onclick="flagSignal(${s.SignalID})">Flag</button>
+        </div>
       </td>
+
     `;
     tbody.appendChild(tr);
   });
